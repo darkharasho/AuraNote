@@ -121,6 +121,7 @@ body {
   flex-direction: column;
   overflow: hidden;
   border-bottom-left-radius: 12px;
+  margin-left: 15px;
 }
 
 #tab-list {
@@ -177,6 +178,7 @@ body {
   cursor: pointer;
   border-radius: 8px;
   transition: background 0.2s;
+  margin-bottom: 15px;
 }
 
 #add-tab:hover {
@@ -189,7 +191,7 @@ body {
 
 #note-area {
   flex: 1;
-  margin: 20px;
+  margin: 20px 20px 20px 5px;
   background: #303030;
   position: relative;
   color: #fff;
