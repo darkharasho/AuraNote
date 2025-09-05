@@ -216,6 +216,11 @@ body {
   overflow: auto;
 }
 
+#editor:focus,
+#editor .ProseMirror:focus {
+  outline: none;
+}
+
 #editor * {
   margin: 0;
 }

@@ -55,6 +55,7 @@ if (isDev) {
 }
 
 let editor = null;
+let ignoreUpdate = false;
 let setContent = (content) => {
   editorContainer.textContent = content;
 };
@@ -112,6 +113,7 @@ async function initMilkdown() {
 
     editor.action((ctx) => {
       ctx.get(listenerCtx).markdownUpdated((_, markdown) => {
+        if (ignoreUpdate) return;
         if (!currentTab) return;
         currentTab.content = markdown;
         saveTabs();
@@ -119,7 +121,9 @@ async function initMilkdown() {
     });
 
     setContent = (md) => {
+      ignoreUpdate = true;
       editor.action(replaceAll(md));
+      ignoreUpdate = false;
     };
     console.log('Milkdown editor ready');
   } catch (err) {
