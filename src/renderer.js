@@ -120,6 +120,15 @@ async function initMilkdown() {
         if (ignoreUpdate) return;
         if (!currentTab) return;
         currentTab.content = markdown;
+        const firstLine = markdown.trimStart().split('\n')[0];
+        const m = firstLine.match(/^#{1,6}\s+(.*)$/);
+        if (m) {
+          const name = m[1].trim();
+          if (name && currentTab.title !== name) {
+            currentTab.title = name;
+            renderTabs();
+          }
+        }
         saveTabs();
       });
     });
@@ -145,7 +154,13 @@ function saveTabs() {
   localStorage.setItem('tabs', JSON.stringify(tabs));
 }
 
-function createTab(title = 'New Note') {
+function createTab(title) {
+  if (!title) {
+    let index = 1;
+    const base = 'Note ';
+    while (tabs.some(t => t.title === base + index)) index++;
+    title = base + index;
+  }
   const id = Date.now().toString();
   const tab = { id, title, content: '' };
   tabs.push(tab);
@@ -190,7 +205,6 @@ function renderTabs() {
     };
 
     titleSpan.addEventListener('dblclick', startRename);
-    tabEl.addEventListener('dblclick', startRename);
 
     const closeBtn = document.createElement('button');
     closeBtn.className = 'close-tab';
@@ -265,7 +279,7 @@ if (tabs.length) {
   renderTabs();
   switchTab(tabs[0].id);
 } else {
-  createTab('Note 1');
+  createTab();
 }
 
 initMilkdown();

@@ -143,6 +143,7 @@ body {
   cursor: pointer;
   border-radius: 8px;
   transition: background 0.2s;
+  position: relative;
 }
 
 .tab:hover {
@@ -150,7 +151,22 @@ body {
 }
 
 .tab.active {
-  background: rgba(255,255,255,0.1);
+  background: #303030;
+  margin-right: 0;
+  border-radius: 8px 0 0 8px;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -8px;
+  width: 8px;
+  height: 100%;
+  background: #303030;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  z-index: 1;
 }
 
 .tab .title {
@@ -167,12 +183,18 @@ body {
 }
 
 .tab .close-tab {
+  display: none;
   background: transparent;
   border: none;
   color: #fff;
   cursor: pointer;
   font-size: 16px;
   padding: 0 4px;
+}
+
+.tab.active .close-tab,
+.tab:hover .close-tab {
+  display: inline;
 }
 
 #add-tab {
@@ -196,7 +218,7 @@ body {
 
 #note-area {
   flex: 1;
-  margin: 10px 15px 15px 5px;
+  margin: 4px 15px 4px 0;
   background: #303030;
   position: relative;
   color: #fff;
