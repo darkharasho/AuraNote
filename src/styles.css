@@ -172,7 +172,8 @@ body {
 
 #editor {
   background: transparent;
-  color: transparent;
+  color: #fff;
+  -webkit-text-fill-color: transparent;
   border: none;
   outline: none;
   resize: none;

@@ -12,6 +12,9 @@ function createWindow() {
     minHeight: 400,
     frame: false,
     titleBarStyle: 'hidden',
+    show: false,
+    transparent: true,
+    backgroundColor: '#00000000',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
@@ -21,6 +24,9 @@ function createWindow() {
   mainWindow.setMicaEffect();
 
   mainWindow.loadFile(path.join(__dirname, 'src', 'index.html'));
+  mainWindow.webContents.once('dom-ready', () => {
+    mainWindow.show();
+  });
 }
 
 app.whenReady().then(createWindow);
