@@ -14,15 +14,20 @@ const logsBtn = document.getElementById('logs-btn');
 const logPanel = document.getElementById('log-panel');
 const logOutput = document.getElementById('log-output');
 
+function formatLogArg(a) {
+  if (a instanceof Error) {
+    return `${a.message}\n${a.stack}`;
+  }
+  if (typeof a === 'object') {
+    try { return JSON.stringify(a, null, 2); }
+    catch { return String(a); }
+  }
+  return String(a);
+}
+
 function appendLog(level, args) {
   const line = document.createElement('div');
-  const msg = Array.from(args).map(a => {
-    if (typeof a === 'object') {
-      try { return JSON.stringify(a); }
-      catch { return String(a); }
-    }
-    return String(a);
-  }).join(' ');
+  const msg = Array.from(args).map(formatLogArg).join(' ');
   line.textContent = `[${level}] ${msg}`;
   logOutput.appendChild(line);
   logOutput.scrollTop = logOutput.scrollHeight;
@@ -36,7 +41,7 @@ function appendLog(level, args) {
   };
 });
 
-window.addEventListener('error', (e) => appendLog('error', [e.message]));
+window.addEventListener('error', (e) => appendLog('error', [e.error || e.message]));
 window.addEventListener('unhandledrejection', (e) => appendLog('error', [e.reason]));
 
 logsBtn.addEventListener('click', () => {
@@ -50,12 +55,17 @@ let setContent = (content) => {
 
 async function initMilkdown() {
   try {
+    console.log('Loading Milkdown core...');
     const { Editor, rootCtx, defaultValueCtx } = await import('../node_modules/@milkdown/core/lib/index.js');
+    console.log('Loading Nord theme...');
     const { nord } = await import('../node_modules/@milkdown/theme-nord/lib/index.js');
+    console.log('Loading CommonMark preset...');
     const { commonmark } = await import('../node_modules/@milkdown/preset-commonmark/lib/index.js');
+    console.log('Loading listener plugin...');
     const { listener, listenerCtx } = await import('../node_modules/@milkdown/plugin-listener/lib/index.js');
     const { replaceAll } = await import('../node_modules/@milkdown/utils/lib/index.js');
 
+    console.log('Creating Milkdown editor...');
     editor = await Editor.make()
       .config((ctx) => {
         ctx.set(rootCtx, editorContainer);
@@ -77,6 +87,7 @@ async function initMilkdown() {
     setContent = (md) => {
       editor.action(replaceAll(md));
     };
+    console.log('Milkdown editor ready');
   } catch (err) {
     console.error('Milkdown failed to load, falling back to plain editor', err);
     editorContainer.contentEditable = 'true';
