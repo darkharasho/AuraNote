@@ -104,11 +104,13 @@ async function initMilkdown() {
         ctx.set(rootCtx, editorContainer);
         ctx.set(defaultValueCtx, currentTab?.content || '');
         ctx.set(editorViewOptionsCtx, {});
-        ctx.update(prosePluginsCtx, (ps) => ps.concat(exitCodeBlock));
       })
       .use(nord)
       .use(commonmark)
       .use(listener)
+      .config((ctx) => {
+        ctx.update(prosePluginsCtx, (ps) => ps.concat(exitCodeBlock));
+      })
       .create();
 
     editor.action((ctx) => {

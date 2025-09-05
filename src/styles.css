@@ -296,3 +296,21 @@ select {
 #log-panel pre {
   margin: 0;
 }
+
+#editor ul,
+#editor ol {
+  list-style: revert;
+  padding-left: 1.5em;
+  margin-left: 1em;
+}
+
+#editor pre {
+  background: rgba(0,0,0,0.3);
+  padding: 8px;
+  border-radius: 6px;
+  overflow: auto;
+}
+
+#editor pre code {
+  font-family: monospace;
+}
