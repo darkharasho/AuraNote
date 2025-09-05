@@ -125,13 +125,20 @@ body {
 .tab {
   display: flex;
   align-items: center;
-  padding: 8px;
+  padding: 6px 10px;
+  margin: 4px;
   color: #fff;
   cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.tab:hover {
+  background: rgba(255,255,255,0.05);
 }
 
 .tab.active {
-  background: rgba(0,0,0,0.3);
+  background: rgba(255,255,255,0.1);
 }
 
 .tab .title {
@@ -166,7 +173,7 @@ body {
 
 #note-area {
   flex: 1;
-  margin: 20px;
+  margin: 0 20px 20px 20px;
   background: #303030;
   position: relative;
   color: #fff;
@@ -185,6 +192,7 @@ body {
   overflow: auto;
   font-family: inherit;
   font-size: 14px;
+  line-height: 1.4;
 }
 
 #editor {
@@ -200,6 +208,12 @@ body {
 #preview {
   pointer-events: none;
   color: #fff;
+  white-space: pre-wrap;
+}
+
+#preview * {
+  margin: 0;
+  line-height: 1.4;
 }
 
 .hidden {

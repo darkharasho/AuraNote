@@ -12,6 +12,8 @@ const mainView = document.getElementById('main-view');
 const gradientSelect = document.getElementById('gradient-select');
 const fontSelect = document.getElementById('font-select');
 
+marked.setOptions({ breaks: true });
+
 function createTab(title = 'New Note') {
   const id = Date.now().toString();
   const tab = { id, title, content: '' };
