@@ -19,59 +19,67 @@ let setContent = (content) => {
 let markdownExtension;
 let remirrorReady = false;
 
-try {
-  const { HelpersExtension } = require('remirror');
-  const { createDomManager, createDomEditor } = require('@remirror/dom');
-  const { DocExtension } = require('@remirror/extension-doc');
-  const { ParagraphExtension } = require('@remirror/extension-paragraph');
-  const { TextExtension } = require('@remirror/extension-text');
-  const { HeadingExtension } = require('@remirror/extension-heading');
-  const { BoldExtension } = require('@remirror/extension-bold');
-  const { ItalicExtension } = require('@remirror/extension-italic');
-  const { HardBreakExtension } = require('@remirror/extension-hard-break');
-  const { HistoryExtension } = require('@remirror/extension-history');
-  const { MarkdownExtension } = require('@remirror/extension-markdown');
+async function initRemirror() {
+  try {
+    const { HelpersExtension } = await import('remirror');
+    const { createDomManager, createDomEditor } = await import('@remirror/dom');
+    const { DocExtension } = await import('@remirror/extension-doc');
+    const { ParagraphExtension } = await import('@remirror/extension-paragraph');
+    const { TextExtension } = await import('@remirror/extension-text');
+    const { HeadingExtension } = await import('@remirror/extension-heading');
+    const { BoldExtension } = await import('@remirror/extension-bold');
+    const { ItalicExtension } = await import('@remirror/extension-italic');
+    const { HardBreakExtension } = await import('@remirror/extension-hard-break');
+    const { HistoryExtension } = await import('@remirror/extension-history');
+    const { MarkdownExtension } = await import('@remirror/extension-markdown');
 
-  markdownExtension = new MarkdownExtension();
-  const manager = createDomManager([
-    new DocExtension(),
-    new ParagraphExtension(),
-    new TextExtension(),
-    new HeadingExtension(),
-    new BoldExtension(),
-    new ItalicExtension(),
-    new HardBreakExtension(),
-    new HistoryExtension(),
-    new HelpersExtension(),
-    markdownExtension,
-  ]);
+    markdownExtension = new MarkdownExtension();
+    const manager = createDomManager([
+      new DocExtension(),
+      new ParagraphExtension(),
+      new TextExtension(),
+      new HeadingExtension(),
+      new BoldExtension(),
+      new ItalicExtension(),
+      new HardBreakExtension(),
+      new HistoryExtension(),
+      new HelpersExtension(),
+      markdownExtension,
+    ]);
 
-  const editor = createDomEditor({
-    manager,
-    element: editorContainer,
-    initialContent: markdownExtension.markdownToProsemirrorNode(''),
-  });
+    const editor = createDomEditor({
+      manager,
+      element: editorContainer,
+      initialContent: markdownExtension.markdownToProsemirrorNode(''),
+    });
 
-  addHandler = editor.addHandler;
-  getState = editor.getState;
-  setContent = editor.setContent;
-  editorContainer.addEventListener('click', () => editor.view.focus());
-  remirrorReady = true;
+    addHandler = editor.addHandler;
+    getState = editor.getState;
+    setContent = editor.setContent;
+    editorContainer.addEventListener('click', () => editor.view.focus());
+    remirrorReady = true;
 
-  addHandler('transaction', () => {
-    if (!currentTab) return;
-    currentTab.content = markdownExtension.getMarkdown(getState());
-    saveTabs();
-  });
-} catch (err) {
-  console.error('Remirror failed to load, falling back to plain editor', err);
-  editorContainer.contentEditable = 'true';
-  editorContainer.addEventListener('input', () => {
-    if (!currentTab) return;
-    currentTab.content = editorContainer.textContent;
-    saveTabs();
-  });
+    addHandler('transaction', () => {
+      if (!currentTab) return;
+      currentTab.content = markdownExtension.getMarkdown(getState());
+      saveTabs();
+    });
+
+    if (currentTab) {
+      setContent(markdownExtension.markdownToProsemirrorNode(currentTab.content), { triggerChange: false });
+    }
+  } catch (err) {
+    console.error('Remirror failed to load, falling back to plain editor', err);
+    editorContainer.contentEditable = 'true';
+    editorContainer.addEventListener('input', () => {
+      if (!currentTab) return;
+      currentTab.content = editorContainer.textContent;
+      saveTabs();
+    });
+  }
 }
+
+initRemirror();
 
 function saveTabs() {
   localStorage.setItem('tabs', JSON.stringify(tabs));
