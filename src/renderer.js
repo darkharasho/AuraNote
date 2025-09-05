@@ -29,14 +29,32 @@ function renderTabs() {
     const titleSpan = document.createElement('span');
     titleSpan.className = 'title';
     titleSpan.textContent = tab.title;
-    titleSpan.addEventListener('dblclick', (e) => {
+
+    const startRename = (e) => {
       e.stopPropagation();
-      const newName = prompt('Rename tab', tab.title);
-      if (newName) {
-        tab.title = newName;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'rename-input';
+      input.value = tab.title;
+      tabEl.replaceChild(input, titleSpan);
+      input.focus();
+      input.select();
+
+      const finish = () => {
+        const newName = input.value.trim();
+        if (newName) tab.title = newName;
         renderTabs();
-      }
-    });
+      };
+
+      input.addEventListener('blur', finish);
+      input.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter') finish();
+        if (ev.key === 'Escape') renderTabs();
+      });
+    };
+
+    titleSpan.addEventListener('dblclick', startRename);
+    tabEl.addEventListener('dblclick', startRename);
 
     const closeBtn = document.createElement('button');
     closeBtn.className = 'close-tab';
