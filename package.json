@@ -1,0 +1,20 @@
+{
+  "name": "auranote",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"No tests configured\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@remirror/pm": "^3.0.1",
+    "electron": "^25.9.8",
+    "mica-electron": "^1.5.16",
+    "remirror": "^3.0.3"
+  }
+}

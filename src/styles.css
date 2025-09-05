@@ -1,0 +1,273 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+:root {
+  --border-gradient: linear-gradient(135deg,#ff00ff,#00ffff);
+  --app-font: 'Nunito', sans-serif;
+}
+
+body {
+  font-family: var(--app-font);
+  background: transparent;
+  overflow: hidden;
+}
+
+#app {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  background: transparent;
+}
+
+#app::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: 12px;
+  background: var(--border-gradient);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+#app > * {
+  position: relative;
+  z-index: 0;
+}
+
+#titlebar {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+  padding-right: 0;
+  user-select: none;
+  -webkit-app-region: drag;
+  color: #fff;
+  background: rgba(0,0,0,0.2);
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+#titlebar-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+}
+
+#app-title {
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+#settings-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#window-controls {
+  display: flex;
+}
+
+.window-btn {
+  width: 46px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+#close-btn {
+  font-size: 16px;
+}
+
+.window-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+#close-btn:hover {
+  background: #e81123;
+}
+
+#main-view {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  background: rgba(0,0,0,0.2);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+#tabs {
+  width: 150px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-bottom-left-radius: 12px;
+  margin-left: 15px;
+}
+
+#tab-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  padding: 6px 14px 6px 20px;
+  margin: 4px;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.tab:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.tab.active {
+  background: rgba(255,255,255,0.1);
+}
+
+.tab .title {
+  flex: 1;
+}
+
+.rename-input {
+  flex: 1;
+  background: rgba(0,0,0,0.4);
+  border: none;
+  color: #fff;
+  padding: 2px 4px;
+  font-size: inherit;
+}
+
+.tab .close-tab {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0 4px;
+}
+
+#add-tab {
+  border: none;
+  background: transparent;
+  color: #fff;
+  padding: 6px 14px 6px 20px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.2s;
+  margin-bottom: 15px;
+}
+
+#add-tab:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+#add-tab:active {
+  background: rgba(255,255,255,0.1);
+}
+
+#note-area {
+  flex: 1;
+  margin: 10px 15px 15px 5px;
+  background: #303030;
+  position: relative;
+  color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  overflow: hidden;
+}
+
+#editor {
+  height: 100%;
+  padding: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.4;
+  background: transparent;
+  color: #fff;
+  overflow: auto;
+}
+
+#editor * {
+  margin: 0;
+}
+
+#editor h1 { font-size: 1.6em; font-weight: bold; }
+#editor h2 { font-size: 1.4em; font-weight: bold; }
+#editor h3 { font-size: 1.2em; font-weight: bold; }
+#editor h4,
+#editor h5,
+#editor h6 { font-weight: bold; }
+
+.hidden {
+  display: none;
+}
+
+#settings-view {
+  flex: 1;
+  padding: 20px;
+  color: #fff;
+}
+
+.setting {
+  margin-bottom: 20px;
+}
+
+select {
+  padding: 5px;
+}
+
+#back-btn {
+  padding: 5px 10px;
+}
+
+/* Minimal dark scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.3);
+}
