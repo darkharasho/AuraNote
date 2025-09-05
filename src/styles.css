@@ -49,12 +49,14 @@ body {
   height: 32px;
   display: flex;
   align-items: center;
-  padding-left: 8px;
+  padding-left: 16px;
   padding-right: 0;
   user-select: none;
   -webkit-app-region: drag;
   color: #fff;
   background: rgba(0,0,0,0.2);
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }
 
 #titlebar-right {
@@ -67,6 +69,7 @@ body {
 
 #app-title {
   font-weight: bold;
+  margin-left: 4px;
 }
 
 #settings-btn {
@@ -107,6 +110,9 @@ body {
   flex: 1;
   display: flex;
   overflow: hidden;
+  background: rgba(0,0,0,0.2);
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
 }
 
 #tabs {
@@ -115,6 +121,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  border-bottom-left-radius: 12px;
 }
 
 #tab-list {
@@ -125,7 +132,7 @@ body {
 .tab {
   display: flex;
   align-items: center;
-  padding: 6px 10px;
+  padding: 6px 14px;
   margin: 4px;
   color: #fff;
   cursor: pointer;
@@ -220,6 +227,22 @@ body {
   margin: 0;
   line-height: 1.4;
 }
+#preview .md-h1,
+#preview .md-h2,
+#preview .md-h3,
+#preview .md-h4,
+#preview .md-h5,
+#preview .md-h6 {
+  display: flex;
+  align-items: center;
+}
+
+#preview .md-h1 { font-size: 1.6em; font-weight: bold; }
+#preview .md-h2 { font-size: 1.4em; font-weight: bold; }
+#preview .md-h3 { font-size: 1.2em; font-weight: bold; }
+#preview .md-h4,
+#preview .md-h5,
+#preview .md-h6 { font-weight: bold; }
 
 .hidden {
   display: none;
