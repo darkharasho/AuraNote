@@ -12,11 +12,16 @@ const mainView = document.getElementById('main-view');
 const gradientSelect = document.getElementById('gradient-select');
 const fontSelect = document.getElementById('font-select');
 
-const renderer = new marked.Renderer();
-renderer.heading = (text, level) => {
-  return `<div class="md-h${level}">${text}</div>`;
-};
-marked.setOptions({ breaks: true, renderer });
+marked.setOptions({ breaks: true });
+marked.use({
+  renderer: {
+    heading(token) {
+      const text = typeof token === 'object' ? token.text : token;
+      const depth = typeof token === 'object' ? token.depth : arguments[1];
+      return `<div class="md-h${depth}">${text}</div>`;
+    }
+  }
+});
 
 function createTab(title = 'New Note') {
   const id = Date.now().toString();
