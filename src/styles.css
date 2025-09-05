@@ -72,7 +72,8 @@ body {
   margin-left: 4px;
 }
 
-#settings-btn {
+#settings-btn,
+#logs-btn {
   background: transparent;
   border: none;
   color: #fff;
@@ -270,4 +271,23 @@ select {
 
 *::-webkit-scrollbar-thumb:hover {
   background: rgba(255,255,255,0.3);
+}
+
+#log-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 30%;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  font-family: monospace;
+  padding: 8px;
+  overflow-y: auto;
+  -webkit-app-region: no-drag;
+  z-index: 1002;
+}
+
+#log-panel pre {
+  margin: 0;
 }

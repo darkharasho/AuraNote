@@ -10,6 +10,38 @@ const settingsView = document.getElementById('settings-view');
 const mainView = document.getElementById('main-view');
 const gradientSelect = document.getElementById('gradient-select');
 const fontSelect = document.getElementById('font-select');
+const logsBtn = document.getElementById('logs-btn');
+const logPanel = document.getElementById('log-panel');
+const logOutput = document.getElementById('log-output');
+
+function appendLog(level, args) {
+  const line = document.createElement('div');
+  const msg = Array.from(args).map(a => {
+    if (typeof a === 'object') {
+      try { return JSON.stringify(a); }
+      catch { return String(a); }
+    }
+    return String(a);
+  }).join(' ');
+  line.textContent = `[${level}] ${msg}`;
+  logOutput.appendChild(line);
+  logOutput.scrollTop = logOutput.scrollHeight;
+}
+
+['log','warn','error'].forEach(level => {
+  const orig = console[level];
+  console[level] = (...args) => {
+    orig.apply(console, args);
+    appendLog(level, args);
+  };
+});
+
+window.addEventListener('error', (e) => appendLog('error', [e.message]));
+window.addEventListener('unhandledrejection', (e) => appendLog('error', [e.reason]));
+
+logsBtn.addEventListener('click', () => {
+  logPanel.classList.toggle('hidden');
+});
 
 let editor = null;
 let setContent = (content) => {
