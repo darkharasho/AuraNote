@@ -22,12 +22,34 @@ function createTab(title = 'New Note') {
 function renderTabs() {
   tabList.innerHTML = '';
   tabs.forEach(tab => {
-    const btn = document.createElement('button');
-    btn.textContent = tab.title;
-    btn.dataset.id = tab.id;
-    if (tab.id === currentTab?.id) btn.classList.add('active');
-    btn.addEventListener('click', () => switchTab(tab.id));
-    tabList.appendChild(btn);
+    const tabEl = document.createElement('div');
+    tabEl.className = 'tab';
+    if (tab.id === currentTab?.id) tabEl.classList.add('active');
+
+    const titleSpan = document.createElement('span');
+    titleSpan.className = 'title';
+    titleSpan.textContent = tab.title;
+    titleSpan.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      const newName = prompt('Rename tab', tab.title);
+      if (newName) {
+        tab.title = newName;
+        renderTabs();
+      }
+    });
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'close-tab';
+    closeBtn.textContent = '×';
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeTab(tab.id);
+    });
+
+    tabEl.appendChild(titleSpan);
+    tabEl.appendChild(closeBtn);
+    tabEl.addEventListener('click', () => switchTab(tab.id));
+    tabList.appendChild(tabEl);
   });
 }
 
@@ -35,6 +57,23 @@ function switchTab(id) {
   currentTab = tabs.find(t => t.id === id);
   editor.value = currentTab.content;
   renderMarkdown();
+  renderTabs();
+}
+
+function closeTab(id) {
+  const index = tabs.findIndex(t => t.id === id);
+  if (index === -1) return;
+  tabs.splice(index, 1);
+  if (currentTab?.id === id) {
+    currentTab = tabs[0] || null;
+    if (currentTab) {
+      editor.value = currentTab.content;
+      renderMarkdown();
+    } else {
+      editor.value = '';
+      preview.innerHTML = '';
+    }
+  }
   renderTabs();
 }
 

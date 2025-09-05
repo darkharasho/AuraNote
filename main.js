@@ -1,24 +1,21 @@
-const { app, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
-const { MicaBrowserWindow } = require('mica-electron');
 
 let mainWindow;
 
 function createWindow() {
-  mainWindow = new MicaBrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1000,
     height: 700,
     minWidth: 600,
     minHeight: 400,
     frame: false,
     titleBarStyle: 'hidden',
+    backgroundColor: '#1e1e1e',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
   });
-
-  mainWindow.setMicaEffect();
-  mainWindow.setDarkTheme();
 
   mainWindow.loadFile(path.join(__dirname, 'src', 'index.html'));
 }
@@ -30,7 +27,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-  if (MicaBrowserWindow.getAllWindows().length === 0) createWindow();
+  if (BrowserWindow.getAllWindows().length === 0) createWindow();
 });
 
 ipcMain.handle('window-control', (event, action) => {

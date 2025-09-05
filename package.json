@@ -13,7 +13,6 @@
   "type": "commonjs",
   "dependencies": {
     "electron": "^25.9.8",
-    "marked": "^16.2.1",
-    "mica-electron": "^1.5.16"
+    "marked": "^16.2.1"
   }
 }
