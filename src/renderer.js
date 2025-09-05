@@ -56,12 +56,14 @@ if (isDev) {
 
 let editor = null;
 let ignoreUpdate = false;
-let setContent = (content) => {
-  editorContainer.textContent = content;
-};
+// Defer injecting markdown into the DOM until Milkdown is ready.
+// Otherwise the raw markdown flashes before the editor mounts.
+let setContent = () => {};
 
 async function initMilkdown() {
   try {
+    // Ensure the editor container is empty before Milkdown mounts.
+    editorContainer.textContent = '';
     console.log('Loading Milkdown core...');
     const {
       Editor,
