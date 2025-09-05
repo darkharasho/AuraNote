@@ -19,19 +19,19 @@ let setContent = (content) => {
 async function initMilkdown() {
   try {
     const { Editor, rootCtx, defaultValueCtx } = await import('@milkdown/core');
-    const { commonmark } = await import('@milkdown/preset-commonmark');
     const { nord } = await import('@milkdown/theme-nord');
+    const { commonmark } = await import('@milkdown/preset-commonmark');
     const { listener, listenerCtx } = await import('@milkdown/plugin-listener');
     const { replaceAll } = await import('@milkdown/utils');
 
     editor = await Editor.make()
-      .use(nord)
-      .use(commonmark)
-      .use(listener)
       .config((ctx) => {
         ctx.set(rootCtx, editorContainer);
         ctx.set(defaultValueCtx, currentTab?.content || '');
       })
+      .use(nord)
+      .use(commonmark)
+      .use(listener)
       .create();
 
     editor.action((ctx) => {
@@ -168,7 +168,13 @@ const closeBtn = document.getElementById('close-btn');
 
 minBtn.addEventListener('click', () => window.api.windowControl('minimize'));
 maxBtn.addEventListener('click', () => window.api.windowControl('maximize'));
-closeBtn.addEventListener('click', () => window.api.windowControl('close'));
+closeBtn.addEventListener('click', () => {
+  if (window.api?.windowControl) {
+    window.api.windowControl('close');
+  } else {
+    window.close();
+  }
+});
 
 if (tabs.length) {
   renderTabs();
