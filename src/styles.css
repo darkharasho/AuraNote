@@ -132,6 +132,7 @@ body {
 #tab-list {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .tab {
@@ -236,6 +237,11 @@ body {
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.5);
   overflow: hidden;
+}
+
+#note-area.attached {
+  border-top-left-radius: 0;
+  box-shadow: none;
 }
 
 #editor {
