@@ -106,7 +106,7 @@ body {
 #main-view {
   flex: 1;
   display: flex;
-  overflow: visible;
+  overflow: hidden;
 }
 
 #tabs {
@@ -173,7 +173,7 @@ body {
 
 #note-area {
   flex: 1;
-  margin: 0 20px 20px 20px;
+  margin: 20px;
   background: #303030;
   position: relative;
   color: #fff;
@@ -197,12 +197,17 @@ body {
 
 #editor {
   background: transparent;
-  color: #fff;
+  color: transparent;
   -webkit-text-fill-color: transparent;
   border: none;
   outline: none;
   resize: none;
   caret-color: #fff;
+}
+
+#editor::selection {
+  background: transparent;
+  color: transparent;
 }
 
 #preview {
