@@ -201,17 +201,11 @@ body {
 }
 
 #editor {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  height: 100%;
   padding: 10px;
   font-family: inherit;
   font-size: 14px;
   line-height: 1.4;
-  border: none;
-  outline: none;
   background: transparent;
   color: #fff;
   overflow: auto;

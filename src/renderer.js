@@ -1,9 +1,21 @@
+const { HelpersExtension } = require('remirror');
+const { createDomManager, createDomEditor } = require('@remirror/dom');
+const { DocExtension } = require('@remirror/extension-doc');
+const { ParagraphExtension } = require('@remirror/extension-paragraph');
+const { TextExtension } = require('@remirror/extension-text');
+const { HeadingExtension } = require('@remirror/extension-heading');
+const { BoldExtension } = require('@remirror/extension-bold');
+const { ItalicExtension } = require('@remirror/extension-italic');
+const { HardBreakExtension } = require('@remirror/extension-hard-break');
+const { HistoryExtension } = require('@remirror/extension-history');
+const { MarkdownExtension } = require('@remirror/extension-markdown');
+
 let tabs = JSON.parse(localStorage.getItem('tabs') || '[]');
 let currentTab = null;
 
 const tabList = document.getElementById('tab-list');
 const addTabBtn = document.getElementById('add-tab');
-const editor = document.getElementById('editor');
+const editorContainer = document.getElementById('editor');
 const settingsBtn = document.getElementById('settings-btn');
 const backBtn = document.getElementById('back-btn');
 const settingsView = document.getElementById('settings-view');
@@ -11,14 +23,31 @@ const mainView = document.getElementById('main-view');
 const gradientSelect = document.getElementById('gradient-select');
 const fontSelect = document.getElementById('font-select');
 
-const processor = markedSequentialHooks({
-  htmlHooks: [
-    (html) => html.replace(/<p>/g, '<div>').replace(/<\/p>/g, '</div>')
-  ]
+const markdownExtension = new MarkdownExtension();
+const manager = createDomManager([
+  new DocExtension(),
+  new ParagraphExtension(),
+  new TextExtension(),
+  new HeadingExtension(),
+  new BoldExtension(),
+  new ItalicExtension(),
+  new HardBreakExtension(),
+  new HistoryExtension(),
+  new HelpersExtension(),
+  markdownExtension,
+]);
+
+const { addHandler, getState, setContent } = createDomEditor({
+  manager,
+  element: editorContainer,
+  initialContent: markdownExtension.markdownToProsemirrorNode('')
 });
 
-marked.use(processor);
-marked.setOptions({ breaks: true });
+addHandler('transaction', () => {
+  if (!currentTab) return;
+  currentTab.content = markdownExtension.getMarkdown(getState());
+  saveTabs();
+});
 
 function saveTabs() {
   localStorage.setItem('tabs', JSON.stringify(tabs));
@@ -88,8 +117,8 @@ function renderTabs() {
 
 function switchTab(id) {
   currentTab = tabs.find(t => t.id === id);
-  editor.innerText = currentTab?.content || '';
-  renderMarkdown();
+  const md = currentTab?.content || '';
+  setContent(markdownExtension.markdownToProsemirrorNode(md), { triggerChange: false });
   renderTabs();
 }
 
@@ -99,56 +128,14 @@ function closeTab(id) {
   tabs.splice(index, 1);
   if (currentTab?.id === id) {
     currentTab = tabs[0] || null;
-    editor.innerText = currentTab?.content || '';
-    renderMarkdown();
+    const md = currentTab?.content || '';
+    setContent(markdownExtension.markdownToProsemirrorNode(md), { triggerChange: false });
   }
   saveTabs();
   renderTabs();
 }
 
-function getCaretCharacterOffsetWithin(element) {
-  const selection = window.getSelection();
-  if (!selection || selection.rangeCount === 0) return 0;
-  const range = selection.getRangeAt(0);
-  const preRange = range.cloneRange();
-  preRange.selectNodeContents(element);
-  preRange.setEnd(range.startContainer, range.startOffset);
-  return preRange.toString().length;
-}
-
-function setCaretPosition(element, offset) {
-  const range = document.createRange();
-  const selection = window.getSelection();
-  let current = 0;
-  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
-  let node;
-  while ((node = walker.nextNode())) {
-    const next = current + node.length;
-    if (offset <= next) {
-      range.setStart(node, offset - current);
-      break;
-    }
-    current = next;
-  }
-  range.collapse(true);
-  selection.removeAllRanges();
-  selection.addRange(range);
-}
-
-function renderMarkdown() {
-  if (!currentTab) return;
-  const caret = getCaretCharacterOffsetWithin(editor);
-  const raw = editor.innerText;
-  const html = marked.parse(raw);
-  editor.innerHTML = html;
-  setCaretPosition(editor, caret);
-
-  currentTab.content = raw;
-  saveTabs();
-}
-
 addTabBtn.addEventListener('click', () => createTab());
-editor.addEventListener('input', renderMarkdown);
 
 settingsBtn.addEventListener('click', () => {
   mainView.classList.add('hidden');
@@ -168,7 +155,6 @@ fontSelect.addEventListener('change', (e) => {
   document.body.style.setProperty('--app-font', "'" + e.target.value + "', sans-serif");
 });
 
-// Window controls
 const minBtn = document.getElementById('min-btn');
 const maxBtn = document.getElementById('max-btn');
 const closeBtn = document.getElementById('close-btn');
@@ -177,10 +163,10 @@ minBtn.addEventListener('click', () => window.api.windowControl('minimize'));
 maxBtn.addEventListener('click', () => window.api.windowControl('maximize'));
 closeBtn.addEventListener('click', () => window.api.windowControl('close'));
 
-// Initialize
 if (tabs.length) {
   renderTabs();
   switchTab(tabs[0].id);
 } else {
   createTab('Note 1');
 }
+
