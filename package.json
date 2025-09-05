@@ -12,9 +12,12 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@remirror/pm": "^3.0.1",
+    "@milkdown/core": "^7.3.1",
+    "@milkdown/plugin-listener": "^7.3.1",
+    "@milkdown/preset-commonmark": "^7.3.1",
+    "@milkdown/theme-nord": "^7.3.1",
+    "@milkdown/utils": "^7.3.1",
     "electron": "^25.9.8",
-    "mica-electron": "^1.5.16",
-    "remirror": "^3.0.3"
+    "mica-electron": "^1.5.16"
   }
 }

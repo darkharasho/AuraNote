@@ -11,65 +11,39 @@ const mainView = document.getElementById('main-view');
 const gradientSelect = document.getElementById('gradient-select');
 const fontSelect = document.getElementById('font-select');
 
-let addHandler = () => {};
-let getState = () => null;
+let editor = null;
 let setContent = (content) => {
   editorContainer.textContent = content;
 };
-let markdownExtension;
-let remirrorReady = false;
 
-async function initRemirror() {
+async function initMilkdown() {
   try {
-    const { HelpersExtension } = await import('remirror');
-    const { createDomManager, createDomEditor } = await import('@remirror/dom');
-    const { DocExtension } = await import('@remirror/extension-doc');
-    const { ParagraphExtension } = await import('@remirror/extension-paragraph');
-    const { TextExtension } = await import('@remirror/extension-text');
-    const { HeadingExtension } = await import('@remirror/extension-heading');
-    const { BoldExtension } = await import('@remirror/extension-bold');
-    const { ItalicExtension } = await import('@remirror/extension-italic');
-    const { HardBreakExtension } = await import('@remirror/extension-hard-break');
-    const { HistoryExtension } = await import('@remirror/extension-history');
-    const { MarkdownExtension } = await import('@remirror/extension-markdown');
+    const { Editor, rootCtx, defaultValueCtx } = await import('@milkdown/core');
+    const { commonmark } = await import('@milkdown/preset-commonmark');
+    const { nord } = await import('@milkdown/theme-nord');
+    const { listener, listenerCtx } = await import('@milkdown/plugin-listener');
+    const { replaceAll } = await import('@milkdown/utils');
 
-    markdownExtension = new MarkdownExtension();
-    const manager = createDomManager([
-      new DocExtension(),
-      new ParagraphExtension(),
-      new TextExtension(),
-      new HeadingExtension(),
-      new BoldExtension(),
-      new ItalicExtension(),
-      new HardBreakExtension(),
-      new HistoryExtension(),
-      new HelpersExtension(),
-      markdownExtension,
-    ]);
+    editor = await Editor.make()
+      .config((ctx) => {
+        ctx.set(rootCtx, editorContainer);
+        ctx.set(defaultValueCtx, currentTab?.content || '');
+        ctx.get(listenerCtx).markdownUpdated((_, markdown) => {
+          if (!currentTab) return;
+          currentTab.content = markdown;
+          saveTabs();
+        });
+      })
+      .use(nord)
+      .use(commonmark)
+      .use(listener)
+      .create();
 
-    const editor = createDomEditor({
-      manager,
-      element: editorContainer,
-      initialContent: markdownExtension.markdownToProsemirrorNode(''),
-    });
-
-    addHandler = editor.addHandler;
-    getState = editor.getState;
-    setContent = editor.setContent;
-    editorContainer.addEventListener('click', () => editor.view.focus());
-    remirrorReady = true;
-
-    addHandler('transaction', () => {
-      if (!currentTab) return;
-      currentTab.content = markdownExtension.getMarkdown(getState());
-      saveTabs();
-    });
-
-    if (currentTab) {
-      setContent(markdownExtension.markdownToProsemirrorNode(currentTab.content), { triggerChange: false });
-    }
+    setContent = (md) => {
+      editor.action(replaceAll(md));
+    };
   } catch (err) {
-    console.error('Remirror failed to load, falling back to plain editor', err);
+    console.error('Milkdown failed to load, falling back to plain editor', err);
     editorContainer.contentEditable = 'true';
     editorContainer.addEventListener('input', () => {
       if (!currentTab) return;
@@ -79,7 +53,7 @@ async function initRemirror() {
   }
 }
 
-initRemirror();
+initMilkdown();
 
 function saveTabs() {
   localStorage.setItem('tabs', JSON.stringify(tabs));
@@ -150,11 +124,7 @@ function renderTabs() {
 function switchTab(id) {
   currentTab = tabs.find(t => t.id === id);
   const md = currentTab?.content || '';
-  if (remirrorReady) {
-    setContent(markdownExtension.markdownToProsemirrorNode(md), { triggerChange: false });
-  } else {
-    setContent(md);
-  }
+  setContent(md);
   renderTabs();
 }
 
@@ -165,11 +135,7 @@ function closeTab(id) {
   if (currentTab?.id === id) {
     currentTab = tabs[0] || null;
     const md = currentTab?.content || '';
-    if (remirrorReady) {
-      setContent(markdownExtension.markdownToProsemirrorNode(md), { triggerChange: false });
-    } else {
-      setContent(md);
-    }
+    setContent(md);
   }
   saveTabs();
   renderTabs();
