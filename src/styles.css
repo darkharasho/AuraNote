@@ -208,6 +208,7 @@ body {
   bottom: 0;
   padding: 10px;
   overflow: auto;
+  white-space: pre-wrap;
   pointer-events: none;
 }
 
@@ -228,6 +229,7 @@ body {
   resize: none;
   background: transparent;
   color: transparent;
+  -webkit-text-fill-color: transparent;
   caret-color: #fff;
   overflow: auto;
   z-index: 1;
