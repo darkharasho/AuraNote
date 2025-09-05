@@ -6,6 +6,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../node_modules/@milkdown/theme-nord/lib/style.css" />
   <link rel="stylesheet" href="styles.css" />
+
+  <script type="importmap">
+  {
+    "imports": {
+      "@milkdown/core": "../node_modules/@milkdown/core/lib/index.js",
+      "@milkdown/ctx": "../node_modules/@milkdown/ctx/lib/index.js",
+      "@milkdown/exception": "../node_modules/@milkdown/exception/lib/index.js",
+      "@milkdown/plugin-listener": "../node_modules/@milkdown/plugin-listener/lib/index.js",
+      "@milkdown/preset-commonmark": "../node_modules/@milkdown/preset-commonmark/lib/index.js",
+      "@milkdown/theme-nord": "../node_modules/@milkdown/theme-nord/lib/index.js",
+      "@milkdown/utils": "../node_modules/@milkdown/utils/lib/index.js",
+      "@milkdown/transformer": "../node_modules/@milkdown/transformer/lib/index.js",
+      "@milkdown/prose": "../node_modules/@milkdown/prose/lib/index.js",
+      "@milkdown/prose/commands": "../node_modules/@milkdown/prose/lib/commands.js",
+      "@milkdown/prose/inputrules": "../node_modules/@milkdown/prose/lib/inputrules.js",
+      "@milkdown/prose/keymap": "../node_modules/@milkdown/prose/lib/keymap.js",
+      "@milkdown/prose/model": "../node_modules/@milkdown/prose/lib/model.js",
+      "@milkdown/prose/state": "../node_modules/@milkdown/prose/lib/state.js",
+      "@milkdown/prose/view": "../node_modules/@milkdown/prose/lib/view.js"
+    }
+  }
+  </script>
 </head>
 <body>
   <div id="app">
@@ -76,6 +98,6 @@
     <div id="log-panel" class="hidden"><pre id="log-output"></pre></div>
   </div>
 
-  <script src="renderer.js"></script>
+  <script type="module" src="renderer.js"></script>
 </body>
 </html>

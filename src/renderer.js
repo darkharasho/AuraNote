@@ -68,16 +68,16 @@ async function initMilkdown() {
       defaultValueCtx,
       editorViewOptionsCtx,
       prosePluginsCtx,
-    } = await import('../node_modules/@milkdown/core/lib/index.js');
+    } = await import('@milkdown/core');
     console.log('Loading Nord theme...');
-    const { nord } = await import('../node_modules/@milkdown/theme-nord/lib/index.js');
+    const { nord } = await import('@milkdown/theme-nord');
     console.log('Loading CommonMark preset...');
-    const { commonmark } = await import('../node_modules/@milkdown/preset-commonmark/lib/index.js');
+    const { commonmark } = await import('@milkdown/preset-commonmark');
     console.log('Loading listener plugin...');
-    const { listener, listenerCtx } = await import('../node_modules/@milkdown/plugin-listener/lib/index.js');
-    const { replaceAll } = await import('../node_modules/@milkdown/utils/lib/index.js');
-    const { keymap } = await import('../node_modules/prosemirror-keymap/dist/index.js');
-    const { TextSelection } = await import('../node_modules/prosemirror-state/dist/index.js');
+    const { listener, listenerCtx } = await import('@milkdown/plugin-listener');
+    const { replaceAll } = await import('@milkdown/utils');
+    const { keymap } = await import('@milkdown/prose/keymap');
+    const { TextSelection } = await import('@milkdown/prose/state');
 
     const exitCodeBlock = keymap({
       ArrowDown: (state, dispatch) => {
