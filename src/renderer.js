@@ -1,10 +1,9 @@
-let tabs = [];
+let tabs = JSON.parse(localStorage.getItem('tabs') || '[]');
 let currentTab = null;
 
 const tabList = document.getElementById('tab-list');
 const addTabBtn = document.getElementById('add-tab');
 const editor = document.getElementById('editor');
-const preview = document.getElementById('preview');
 const settingsBtn = document.getElementById('settings-btn');
 const backBtn = document.getElementById('back-btn');
 const settingsView = document.getElementById('settings-view');
@@ -13,20 +12,16 @@ const gradientSelect = document.getElementById('gradient-select');
 const fontSelect = document.getElementById('font-select');
 
 marked.setOptions({ breaks: true });
-marked.use({
-  renderer: {
-    heading(token) {
-      const text = typeof token === 'object' ? token.text : token;
-      const depth = typeof token === 'object' ? token.depth : arguments[1];
-      return `<div class="md-h${depth}">${text}</div>`;
-    }
-  }
-});
+
+function saveTabs() {
+  localStorage.setItem('tabs', JSON.stringify(tabs));
+}
 
 function createTab(title = 'New Note') {
   const id = Date.now().toString();
   const tab = { id, title, content: '' };
   tabs.push(tab);
+  saveTabs();
   renderTabs();
   switchTab(id);
 }
@@ -55,6 +50,7 @@ function renderTabs() {
       const finish = () => {
         const newName = input.value.trim();
         if (newName) tab.title = newName;
+        saveTabs();
         renderTabs();
       };
 
@@ -85,8 +81,7 @@ function renderTabs() {
 
 function switchTab(id) {
   currentTab = tabs.find(t => t.id === id);
-  editor.value = currentTab.content;
-  renderMarkdown();
+  editor.innerHTML = currentTab?.content || '';
   renderTabs();
 }
 
@@ -96,31 +91,34 @@ function closeTab(id) {
   tabs.splice(index, 1);
   if (currentTab?.id === id) {
     currentTab = tabs[0] || null;
-    if (currentTab) {
-      editor.value = currentTab.content;
-      renderMarkdown();
-    } else {
-      editor.value = '';
-      preview.innerHTML = '';
-    }
+    editor.innerHTML = currentTab?.content || '';
   }
+  saveTabs();
   renderTabs();
 }
 
 function renderMarkdown() {
   if (!currentTab) return;
-  const raw = editor.value;
-  currentTab.content = raw;
-  preview.innerHTML = marked.parse(raw);
+  const raw = editor.innerText;
+  const html = marked.parse(raw);
+  editor.innerHTML = html;
+  currentTab.content = html;
+  saveTabs();
+  placeCaretAtEnd(editor);
+}
+
+function placeCaretAtEnd(el) {
+  el.focus();
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  range.collapse(false);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
 }
 
 addTabBtn.addEventListener('click', () => createTab());
-
 editor.addEventListener('input', renderMarkdown);
-editor.addEventListener('scroll', () => {
-  preview.scrollTop = editor.scrollTop;
-  preview.scrollLeft = editor.scrollLeft;
-});
 
 settingsBtn.addEventListener('click', () => {
   mainView.classList.add('hidden');
@@ -150,4 +148,9 @@ maxBtn.addEventListener('click', () => window.api.windowControl('maximize'));
 closeBtn.addEventListener('click', () => window.api.windowControl('close'));
 
 // Initialize
-createTab('Note 1');
+if (tabs.length) {
+  renderTabs();
+  switchTab(tabs[0].id);
+} else {
+  createTab('Note 1');
+}

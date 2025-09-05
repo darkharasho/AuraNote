@@ -191,7 +191,7 @@ body {
 
 #note-area {
   flex: 1;
-  margin: 20px 20px 20px 5px;
+  margin: 10px 15px 15px 5px;
   background: #303030;
   position: relative;
   color: #fff;
@@ -200,7 +200,7 @@ body {
   overflow: hidden;
 }
 
-#preview, #editor {
+#editor {
   position: absolute;
   top: 0;
   left: 0;
@@ -210,55 +210,31 @@ body {
   font-family: inherit;
   font-size: 14px;
   line-height: 1.4;
-}
-
-#editor {
-  background: transparent;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
   border: none;
   outline: none;
-  resize: none;
-  caret-color: #fff;
   overflow: auto;
 }
 
-#editor::selection {
+#editor:focus {
+  outline: none;
+}
+
+#editor::selection,
+#editor *::selection {
   background: rgba(255,255,255,0.2);
 }
 
-#preview {
-  pointer-events: none;
-  color: #fff;
-  white-space: pre-wrap;
-  overflow: auto;
-  scrollbar-width: none;
-}
-
-#preview::-webkit-scrollbar {
-  display: none;
-}
-
-#preview * {
+#editor * {
   margin: 0;
   line-height: 1.4;
 }
-#preview .md-h1,
-#preview .md-h2,
-#preview .md-h3,
-#preview .md-h4,
-#preview .md-h5,
-#preview .md-h6 {
-  display: flex;
-  align-items: center;
-}
 
-#preview .md-h1 { font-size: 1.6em; font-weight: bold; }
-#preview .md-h2 { font-size: 1.4em; font-weight: bold; }
-#preview .md-h3 { font-size: 1.2em; font-weight: bold; }
-#preview .md-h4,
-#preview .md-h5,
-#preview .md-h6 { font-weight: bold; }
+#editor h1 { font-size: 1.6em; font-weight: bold; }
+#editor h2 { font-size: 1.4em; font-weight: bold; }
+#editor h3 { font-size: 1.2em; font-weight: bold; }
+#editor h4,
+#editor h5,
+#editor h6 { font-weight: bold; }
 
 .hidden {
   display: none;
