@@ -56,14 +56,14 @@ let setContent = (content) => {
 async function initMilkdown() {
   try {
     console.log('Loading Milkdown core...');
-    const { Editor, rootCtx, defaultValueCtx } = await import('../node_modules/@milkdown/core/lib/index.js');
+    const { Editor, rootCtx, defaultValueCtx } = await import('@milkdown/core');
     console.log('Loading Nord theme...');
-    const { nord } = await import('../node_modules/@milkdown/theme-nord/lib/index.js');
+    const { nord } = await import('@milkdown/theme-nord');
     console.log('Loading CommonMark preset...');
-    const { commonmark } = await import('../node_modules/@milkdown/preset-commonmark/lib/index.js');
+    const { commonmark } = await import('@milkdown/preset-commonmark');
     console.log('Loading listener plugin...');
-    const { listener, listenerCtx } = await import('../node_modules/@milkdown/plugin-listener/lib/index.js');
-    const { replaceAll } = await import('../node_modules/@milkdown/utils/lib/index.js');
+    const { listener, listenerCtx } = await import('@milkdown/plugin-listener');
+    const { replaceAll } = await import('@milkdown/utils');
 
     console.log('Creating Milkdown editor...');
     editor = await Editor.make()
