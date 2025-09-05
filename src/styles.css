@@ -15,15 +15,28 @@ body {
 }
 
 #app {
+  position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
-  border: 2px solid transparent;
   border-radius: 12px;
-  background:
-    linear-gradient(transparent,transparent) padding-box,
-    var(--border-gradient) border-box;
   overflow: hidden;
+  background: transparent;
+}
+
+#app::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: 12px;
+  background: var(--border-gradient);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
 }
 
 #titlebar {
