@@ -112,6 +112,10 @@ function renderMarkdown() {
 addTabBtn.addEventListener('click', () => createTab());
 
 editor.addEventListener('input', renderMarkdown);
+editor.addEventListener('scroll', () => {
+  preview.scrollTop = editor.scrollTop;
+  preview.scrollLeft = editor.scrollLeft;
+});
 
 settingsBtn.addEventListener('click', () => {
   mainView.classList.add('hidden');
