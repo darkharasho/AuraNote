@@ -20,6 +20,7 @@
     "@milkdown/prose": "^7.3.1",
     "nanoid": "^5.0.9",
     "electron": "^25.9.8",
-    "mica-electron": "^1.5.16"
+    "mica-electron": "^1.5.16",
+    "lodash-es": "^4.17.21"
   }
 }
