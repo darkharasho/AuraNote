@@ -31,13 +31,16 @@ async function initMilkdown() {
       .config((ctx) => {
         ctx.set(rootCtx, editorContainer);
         ctx.set(defaultValueCtx, currentTab?.content || '');
-        ctx.get(listenerCtx).markdownUpdated((_, markdown) => {
-          if (!currentTab) return;
-          currentTab.content = markdown;
-          saveTabs();
-        });
       })
       .create();
+
+    editor.action((ctx) => {
+      ctx.get(listenerCtx).markdownUpdated((_, markdown) => {
+        if (!currentTab) return;
+        currentTab.content = markdown;
+        saveTabs();
+      });
+    });
 
     setContent = (md) => {
       editor.action(replaceAll(md));
