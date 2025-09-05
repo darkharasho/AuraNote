@@ -10,66 +10,128 @@ const settingsView = document.getElementById('settings-view');
 const mainView = document.getElementById('main-view');
 const gradientSelect = document.getElementById('gradient-select');
 const fontSelect = document.getElementById('font-select');
+const logsBtn = document.getElementById('logs-btn');
+const logPanel = document.getElementById('log-panel');
+const logOutput = document.getElementById('log-output');
 
-let addHandler = () => {};
-let getState = () => null;
-let setContent = (content) => {
-  editorContainer.textContent = content;
-};
-let markdownExtension;
-let remirrorReady = false;
-
-async function initRemirror() {
-  try {
-    const { HelpersExtension } = await import('remirror');
-    const { createDomManager, createDomEditor } = await import('@remirror/dom');
-    const { DocExtension } = await import('@remirror/extension-doc');
-    const { ParagraphExtension } = await import('@remirror/extension-paragraph');
-    const { TextExtension } = await import('@remirror/extension-text');
-    const { HeadingExtension } = await import('@remirror/extension-heading');
-    const { BoldExtension } = await import('@remirror/extension-bold');
-    const { ItalicExtension } = await import('@remirror/extension-italic');
-    const { HardBreakExtension } = await import('@remirror/extension-hard-break');
-    const { HistoryExtension } = await import('@remirror/extension-history');
-    const { MarkdownExtension } = await import('@remirror/extension-markdown');
-
-    markdownExtension = new MarkdownExtension();
-    const manager = createDomManager([
-      new DocExtension(),
-      new ParagraphExtension(),
-      new TextExtension(),
-      new HeadingExtension(),
-      new BoldExtension(),
-      new ItalicExtension(),
-      new HardBreakExtension(),
-      new HistoryExtension(),
-      new HelpersExtension(),
-      markdownExtension,
-    ]);
-
-    const editor = createDomEditor({
-      manager,
-      element: editorContainer,
-      initialContent: markdownExtension.markdownToProsemirrorNode(''),
-    });
-
-    addHandler = editor.addHandler;
-    getState = editor.getState;
-    setContent = editor.setContent;
-    editorContainer.addEventListener('click', () => editor.view.focus());
-    remirrorReady = true;
-
-    addHandler('transaction', () => {
-      if (!currentTab) return;
-      currentTab.content = markdownExtension.getMarkdown(getState());
-      saveTabs();
-    });
-
-    if (currentTab) {
-      setContent(markdownExtension.markdownToProsemirrorNode(currentTab.content), { triggerChange: false });
+const isDev = process.env.NODE_ENV !== 'production';
+if (isDev) {
+  function formatLogArg(a) {
+    if (a instanceof Error) {
+      return `${a.message}\n${a.stack}`;
     }
+    if (typeof a === 'object') {
+      try { return JSON.stringify(a, null, 2); }
+      catch { return String(a); }
+    }
+    return String(a);
+  }
+
+  function appendLog(level, args) {
+    const line = document.createElement('div');
+    const msg = Array.from(args).map(formatLogArg).join(' ');
+    line.textContent = `[${level}] ${msg}`;
+    logOutput.appendChild(line);
+    logOutput.scrollTop = logOutput.scrollHeight;
+  }
+
+  ['log','warn','error'].forEach(level => {
+    const orig = console[level];
+    console[level] = (...args) => {
+      orig.apply(console, args);
+      appendLog(level, args);
+    };
+  });
+
+  window.addEventListener('error', (e) => appendLog('error', [e.error || e.message]));
+  window.addEventListener('unhandledrejection', (e) => appendLog('error', [e.reason]));
+
+  logsBtn.addEventListener('click', () => {
+    logPanel.classList.toggle('hidden');
+  });
+} else {
+  logsBtn.remove();
+  logPanel.remove();
+}
+
+let editor = null;
+let ignoreUpdate = false;
+// Defer injecting markdown into the DOM until Milkdown is ready.
+// Otherwise the raw markdown flashes before the editor mounts.
+let setContent = () => {};
+
+async function initMilkdown() {
+  try {
+    // Ensure the editor container is empty before Milkdown mounts.
+    editorContainer.textContent = '';
+    console.log('Loading Milkdown core...');
+    const {
+      Editor,
+      rootCtx,
+      defaultValueCtx,
+      editorViewOptionsCtx,
+      prosePluginsCtx,
+    } = await import('@milkdown/core');
+    console.log('Loading Nord theme...');
+    const { nord } = await import('@milkdown/theme-nord');
+    console.log('Loading CommonMark preset...');
+    const { commonmark } = await import('@milkdown/preset-commonmark');
+    console.log('Loading listener plugin...');
+    const { listener, listenerCtx } = await import('@milkdown/plugin-listener');
+    const { replaceAll } = await import('@milkdown/utils');
+    const { keymap } = await import('@milkdown/prose/keymap');
+    const { TextSelection } = await import('@milkdown/prose/state');
+
+    const exitCodeBlock = keymap({
+      ArrowDown: (state, dispatch) => {
+        const { selection } = state;
+        if (!selection.empty) return false;
+        const $pos = selection.$head;
+        if ($pos.parent.type.name !== 'code_block') return false;
+        if ($pos.parentOffset < $pos.parent.content.size) return false;
+        const pos = $pos.after();
+        const paragraph = state.schema.nodes.paragraph.create();
+        if (dispatch) {
+          let tr = state.tr.insert(pos, paragraph);
+          tr = tr.setSelection(TextSelection.create(tr.doc, pos + 1));
+          dispatch(tr);
+        }
+        return true;
+      }
+    });
+
+    console.log('Creating Milkdown editor...');
+    editor = await Editor.make()
+      .config((ctx) => {
+        ctx.set(rootCtx, editorContainer);
+        ctx.set(defaultValueCtx, currentTab?.content || '');
+        ctx.set(editorViewOptionsCtx, {});
+      })
+      .use(nord)
+      .use(commonmark)
+      .use(listener)
+      .config((ctx) => {
+        ctx.update(prosePluginsCtx, (ps) => ps.concat(exitCodeBlock));
+      })
+      .create();
+
+    editor.action((ctx) => {
+      ctx.get(listenerCtx).markdownUpdated((_, markdown) => {
+        if (ignoreUpdate) return;
+        if (!currentTab) return;
+        currentTab.content = markdown;
+        saveTabs();
+      });
+    });
+
+    setContent = (md) => {
+      ignoreUpdate = true;
+      editor.action(replaceAll(md));
+      ignoreUpdate = false;
+    };
+    console.log('Milkdown editor ready');
   } catch (err) {
-    console.error('Remirror failed to load, falling back to plain editor', err);
+    console.error('Milkdown failed to load, falling back to plain editor', err);
     editorContainer.contentEditable = 'true';
     editorContainer.addEventListener('input', () => {
       if (!currentTab) return;
@@ -78,8 +140,6 @@ async function initRemirror() {
     });
   }
 }
-
-initRemirror();
 
 function saveTabs() {
   localStorage.setItem('tabs', JSON.stringify(tabs));
@@ -150,11 +210,7 @@ function renderTabs() {
 function switchTab(id) {
   currentTab = tabs.find(t => t.id === id);
   const md = currentTab?.content || '';
-  if (remirrorReady) {
-    setContent(markdownExtension.markdownToProsemirrorNode(md), { triggerChange: false });
-  } else {
-    setContent(md);
-  }
+  setContent(md);
   renderTabs();
 }
 
@@ -165,11 +221,7 @@ function closeTab(id) {
   if (currentTab?.id === id) {
     currentTab = tabs[0] || null;
     const md = currentTab?.content || '';
-    if (remirrorReady) {
-      setContent(markdownExtension.markdownToProsemirrorNode(md), { triggerChange: false });
-    } else {
-      setContent(md);
-    }
+    setContent(md);
   }
   saveTabs();
   renderTabs();
@@ -201,7 +253,13 @@ const closeBtn = document.getElementById('close-btn');
 
 minBtn.addEventListener('click', () => window.api.windowControl('minimize'));
 maxBtn.addEventListener('click', () => window.api.windowControl('maximize'));
-closeBtn.addEventListener('click', () => window.api.windowControl('close'));
+closeBtn.addEventListener('click', () => {
+  if (window.api?.windowControl) {
+    window.api.windowControl('close');
+  } else {
+    window.close();
+  }
+});
 
 if (tabs.length) {
   renderTabs();
@@ -209,4 +267,6 @@ if (tabs.length) {
 } else {
   createTab('Note 1');
 }
+
+initMilkdown();
 
