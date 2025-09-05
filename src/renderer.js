@@ -12,9 +12,14 @@ const mainView = document.getElementById('main-view');
 const gradientSelect = document.getElementById('gradient-select');
 const fontSelect = document.getElementById('font-select');
 
-const renderer = new marked.Renderer();
-renderer.paragraph = (text) => `<div>${text}</div>`;
-marked.setOptions({ breaks: true, renderer });
+const processor = markedSequentialHooks({
+  htmlHooks: [
+    (html) => html.replace(/<p>/g, '<div>').replace(/<\/p>/g, '</div>')
+  ]
+});
+
+marked.use(processor);
+marked.setOptions({ breaks: true });
 
 function saveTabs() {
   localStorage.setItem('tabs', JSON.stringify(tabs));
