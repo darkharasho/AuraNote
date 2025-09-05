@@ -25,6 +25,9 @@ async function initMilkdown() {
     const { replaceAll } = await import('@milkdown/utils');
 
     editor = await Editor.make()
+      .use(nord)
+      .use(commonmark)
+      .use(listener)
       .config((ctx) => {
         ctx.set(rootCtx, editorContainer);
         ctx.set(defaultValueCtx, currentTab?.content || '');
@@ -34,9 +37,6 @@ async function initMilkdown() {
           saveTabs();
         });
       })
-      .use(nord)
-      .use(commonmark)
-      .use(listener)
       .create();
 
     setContent = (md) => {
@@ -52,8 +52,6 @@ async function initMilkdown() {
     });
   }
 }
-
-initMilkdown();
 
 function saveTabs() {
   localStorage.setItem('tabs', JSON.stringify(tabs));
@@ -175,4 +173,6 @@ if (tabs.length) {
 } else {
   createTab('Note 1');
 }
+
+initMilkdown();
 
