@@ -10,9 +10,7 @@ html, body {
 
 body {
   font-family: var(--app-font);
-  background: var(--border-gradient);
-  padding: 2px;
-  box-sizing: border-box;
+  background: transparent;
   overflow: hidden;
 }
 
@@ -20,8 +18,11 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #2a2a2a;
-  border-radius: 8px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background:
+    linear-gradient(transparent,transparent) padding-box,
+    var(--border-gradient) border-box;
   overflow: hidden;
 }
 
@@ -34,7 +35,9 @@ body {
   user-select: none;
   -webkit-app-region: drag;
   color: #fff;
-  background: #1e1e1e;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
 }
 
 #titlebar-right {
@@ -86,7 +89,7 @@ body {
 #main-view {
   flex: 1;
   display: flex;
-  overflow: hidden;
+  overflow: visible;
 }
 
 #tabs {
@@ -96,8 +99,8 @@ body {
   -webkit-backdrop-filter: blur(20px) saturate(150%);
   display: flex;
   flex-direction: column;
-  border-top-left-radius: 6px;
-  border-bottom-left-radius: 6px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
   overflow: hidden;
 }
 
@@ -150,11 +153,12 @@ body {
 
 #note-area {
   flex: 1;
+  margin: 20px;
   background: #303030;
   position: relative;
   color: #fff;
-  border-top-right-radius: 6px;
-  border-bottom-right-radius: 6px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
   overflow: hidden;
 }
 
@@ -210,7 +214,7 @@ select {
 /* Minimal dark scrollbars */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #444 transparent;
+  scrollbar-color: rgba(255,255,255,0.2) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -223,10 +227,10 @@ select {
 }
 
 *::-webkit-scrollbar-thumb {
-  background: #444;
+  background: rgba(255,255,255,0.2);
   border-radius: 3px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: rgba(255,255,255,0.3);
 }

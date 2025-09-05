@@ -22,6 +22,7 @@ function createWindow() {
 
   mainWindow.setDarkTheme();
   mainWindow.setMicaEffect();
+  mainWindow.setRoundedCorner();
 
   mainWindow.loadFile(path.join(__dirname, 'src', 'index.html'));
   mainWindow.webContents.once('dom-ready', () => {
