@@ -4,6 +4,7 @@ let currentTab = null;
 const tabList = document.getElementById('tab-list');
 const addTabBtn = document.getElementById('add-tab');
 const editor = document.getElementById('editor');
+const preview = document.getElementById('preview');
 const settingsBtn = document.getElementById('settings-btn');
 const backBtn = document.getElementById('back-btn');
 const settingsView = document.getElementById('settings-view');
@@ -81,7 +82,8 @@ function renderTabs() {
 
 function switchTab(id) {
   currentTab = tabs.find(t => t.id === id);
-  editor.innerHTML = currentTab?.content || '';
+  editor.value = currentTab?.content || '';
+  renderMarkdown();
   renderTabs();
 }
 
@@ -91,7 +93,8 @@ function closeTab(id) {
   tabs.splice(index, 1);
   if (currentTab?.id === id) {
     currentTab = tabs[0] || null;
-    editor.innerHTML = currentTab?.content || '';
+    editor.value = currentTab?.content || '';
+    renderMarkdown();
   }
   saveTabs();
   renderTabs();
@@ -99,26 +102,19 @@ function closeTab(id) {
 
 function renderMarkdown() {
   if (!currentTab) return;
-  const raw = editor.innerText;
+  const raw = editor.value;
   const html = marked.parse(raw);
-  editor.innerHTML = html;
-  currentTab.content = html;
+  preview.innerHTML = html;
+  currentTab.content = raw;
   saveTabs();
-  placeCaretAtEnd(editor);
-}
-
-function placeCaretAtEnd(el) {
-  el.focus();
-  const range = document.createRange();
-  range.selectNodeContents(el);
-  range.collapse(false);
-  const sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
 }
 
 addTabBtn.addEventListener('click', () => createTab());
 editor.addEventListener('input', renderMarkdown);
+editor.addEventListener('scroll', () => {
+  preview.scrollTop = editor.scrollTop;
+  preview.scrollLeft = editor.scrollLeft;
+});
 
 settingsBtn.addEventListener('click', () => {
   mainView.classList.add('hidden');
