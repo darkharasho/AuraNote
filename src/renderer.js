@@ -4,6 +4,7 @@ let currentTab = null;
 const tabList = document.getElementById('tab-list');
 const addTabBtn = document.getElementById('add-tab');
 const editorContainer = document.getElementById('editor');
+const noteArea = document.getElementById('note-area');
 const settingsBtn = document.getElementById('settings-btn');
 const backBtn = document.getElementById('back-btn');
 const settingsView = document.getElementById('settings-view');
@@ -120,6 +121,15 @@ async function initMilkdown() {
         if (ignoreUpdate) return;
         if (!currentTab) return;
         currentTab.content = markdown;
+        const firstLine = markdown.trimStart().split('\n')[0];
+        const m = firstLine.match(/^#{1,6}\s+(.*)$/);
+        if (m) {
+          const name = m[1].trim();
+          if (name && currentTab.title !== name) {
+            currentTab.title = name;
+            renderTabs();
+          }
+        }
         saveTabs();
       });
     });
@@ -145,7 +155,41 @@ function saveTabs() {
   localStorage.setItem('tabs', JSON.stringify(tabs));
 }
 
-function createTab(title = 'New Note') {
+function renameTab(tabId) {
+  const tab = tabs.find(t => t.id === tabId);
+  if (!tab) return;
+  const tabEl = tabList.querySelector(`.tab[data-id="${tabId}"]`);
+  if (!tabEl) return;
+  const titleSpan = tabEl.querySelector('.title');
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'rename-input';
+  input.value = tab.title;
+  tabEl.replaceChild(input, titleSpan);
+  input.focus();
+  input.select();
+
+  const finish = () => {
+    const newName = input.value.trim();
+    if (newName) tab.title = newName;
+    saveTabs();
+    renderTabs();
+  };
+
+  input.addEventListener('blur', finish);
+  input.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter') finish();
+    if (ev.key === 'Escape') renderTabs();
+  });
+}
+
+function createTab(title) {
+  if (!title) {
+    let index = 1;
+    const base = 'Note ';
+    while (tabs.some(t => t.title === base + index)) index++;
+    title = base + index;
+  }
   const id = Date.now().toString();
   const tab = { id, title, content: '' };
   tabs.push(tab);
@@ -159,38 +203,14 @@ function renderTabs() {
   tabs.forEach(tab => {
     const tabEl = document.createElement('div');
     tabEl.className = 'tab';
+    tabEl.dataset.id = tab.id;
     if (tab.id === currentTab?.id) tabEl.classList.add('active');
 
     const titleSpan = document.createElement('span');
     titleSpan.className = 'title';
     titleSpan.textContent = tab.title;
-
-    const startRename = (e) => {
-      e.stopPropagation();
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.className = 'rename-input';
-      input.value = tab.title;
-      tabEl.replaceChild(input, titleSpan);
-      input.focus();
-      input.select();
-
-      const finish = () => {
-        const newName = input.value.trim();
-        if (newName) tab.title = newName;
-        saveTabs();
-        renderTabs();
-      };
-
-      input.addEventListener('blur', finish);
-      input.addEventListener('keydown', (ev) => {
-        if (ev.key === 'Enter') finish();
-        if (ev.key === 'Escape') renderTabs();
-      });
-    };
-
-    titleSpan.addEventListener('dblclick', startRename);
-    tabEl.addEventListener('dblclick', startRename);
+    titleSpan.title = tab.title;
+    tabEl.title = tab.title;
 
     const closeBtn = document.createElement('button');
     closeBtn.className = 'close-tab';
@@ -202,9 +222,31 @@ function renderTabs() {
 
     tabEl.appendChild(titleSpan);
     tabEl.appendChild(closeBtn);
-    tabEl.addEventListener('click', () => switchTab(tab.id));
+
+    let clickTimer = null;
+    tabEl.addEventListener('click', () => {
+      if (clickTimer) {
+        clearTimeout(clickTimer);
+        clickTimer = null;
+        if (currentTab?.id !== tab.id) {
+          switchTab(tab.id);
+          setTimeout(() => renameTab(tab.id), 0);
+        } else {
+          renameTab(tab.id);
+        }
+      } else {
+        clickTimer = setTimeout(() => {
+          if (currentTab?.id !== tab.id) switchTab(tab.id);
+          clickTimer = null;
+        }, 200);
+      }
+    });
+
     tabList.appendChild(tabEl);
   });
+
+  const firstActive = tabs[0]?.id === currentTab?.id;
+  noteArea.classList.toggle('attached', firstActive);
 }
 
 function switchTab(id) {
@@ -265,7 +307,7 @@ if (tabs.length) {
   renderTabs();
   switchTab(tabs[0].id);
 } else {
-  createTab('Note 1');
+  createTab();
 }
 
 initMilkdown();

@@ -126,35 +126,58 @@ body {
   flex-direction: column;
   overflow: hidden;
   border-bottom-left-radius: 12px;
-  margin-left: 15px;
+  margin: 4px 0 4px 15px;
 }
 
 #tab-list {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .tab {
   display: flex;
   align-items: center;
   padding: 6px 14px 6px 20px;
-  margin: 4px;
+  margin: 0 4px 4px 4px;
   color: #fff;
   cursor: pointer;
   border-radius: 8px;
-  transition: background 0.2s;
+  transition: background 0.2s, box-shadow 0.2s;
+  position: relative;
+  background: transparent;
+  gap: 8px;
 }
 
 .tab:hover {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.07);
 }
 
 .tab.active {
-  background: rgba(255,255,255,0.1);
+  background: #303030;
+  margin-right: 0;
+  border-radius: 8px 0 0 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: -12px;
+  width: 12px;
+  height: 100%;
+  background: #303030;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  z-index: 1;
 }
 
 .tab .title {
   flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .rename-input {
@@ -164,15 +187,26 @@ body {
   color: #fff;
   padding: 2px 4px;
   font-size: inherit;
+  border-radius: 4px;
 }
 
 .tab .close-tab {
+  visibility: hidden;
+  opacity: 0;
   background: transparent;
   border: none;
   color: #fff;
   cursor: pointer;
   font-size: 16px;
   padding: 0 4px;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.tab.active .close-tab,
+.tab:hover .close-tab {
+  visibility: visible;
+  opacity: 1;
 }
 
 #add-tab {
@@ -183,7 +217,7 @@ body {
   cursor: pointer;
   border-radius: 8px;
   transition: background 0.2s;
-  margin-bottom: 15px;
+  margin: 4px 4px 0 4px;
 }
 
 #add-tab:hover {
@@ -196,13 +230,17 @@ body {
 
 #note-area {
   flex: 1;
-  margin: 10px 15px 15px 5px;
+  margin: 4px 10px 10px 0;
   background: #303030;
   position: relative;
   color: #fff;
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  box-shadow: none;
   overflow: hidden;
+}
+
+#note-area.attached {
+  border-top-left-radius: 0;
 }
 
 #editor {
