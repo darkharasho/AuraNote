@@ -4,7 +4,6 @@ let currentTab = null;
 const tabList = document.getElementById('tab-list');
 const addTabBtn = document.getElementById('add-tab');
 const editor = document.getElementById('editor');
-const preview = document.getElementById('preview');
 const settingsBtn = document.getElementById('settings-btn');
 const backBtn = document.getElementById('back-btn');
 const settingsView = document.getElementById('settings-view');
@@ -89,7 +88,7 @@ function renderTabs() {
 
 function switchTab(id) {
   currentTab = tabs.find(t => t.id === id);
-  editor.value = currentTab?.content || '';
+  editor.innerText = currentTab?.content || '';
   renderMarkdown();
   renderTabs();
 }
@@ -100,18 +99,49 @@ function closeTab(id) {
   tabs.splice(index, 1);
   if (currentTab?.id === id) {
     currentTab = tabs[0] || null;
-    editor.value = currentTab?.content || '';
+    editor.innerText = currentTab?.content || '';
     renderMarkdown();
   }
   saveTabs();
   renderTabs();
 }
 
+function getCaretCharacterOffsetWithin(element) {
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return 0;
+  const range = selection.getRangeAt(0);
+  const preRange = range.cloneRange();
+  preRange.selectNodeContents(element);
+  preRange.setEnd(range.startContainer, range.startOffset);
+  return preRange.toString().length;
+}
+
+function setCaretPosition(element, offset) {
+  const range = document.createRange();
+  const selection = window.getSelection();
+  let current = 0;
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
+  let node;
+  while ((node = walker.nextNode())) {
+    const next = current + node.length;
+    if (offset <= next) {
+      range.setStart(node, offset - current);
+      break;
+    }
+    current = next;
+  }
+  range.collapse(true);
+  selection.removeAllRanges();
+  selection.addRange(range);
+}
+
 function renderMarkdown() {
   if (!currentTab) return;
-  const raw = editor.value;
+  const caret = getCaretCharacterOffsetWithin(editor);
+  const raw = editor.innerText;
   const html = marked.parse(raw);
-  preview.innerHTML = html;
+  editor.innerHTML = html;
+  setCaretPosition(editor, caret);
 
   currentTab.content = raw;
   saveTabs();
@@ -119,10 +149,6 @@ function renderMarkdown() {
 
 addTabBtn.addEventListener('click', () => createTab());
 editor.addEventListener('input', renderMarkdown);
-editor.addEventListener('scroll', () => {
-  preview.scrollTop = editor.scrollTop;
-  preview.scrollLeft = editor.scrollLeft;
-});
 
 settingsBtn.addEventListener('click', () => {
   mainView.classList.add('hidden');
