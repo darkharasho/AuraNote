@@ -12,7 +12,9 @@ const mainView = document.getElementById('main-view');
 const gradientSelect = document.getElementById('gradient-select');
 const fontSelect = document.getElementById('font-select');
 
-marked.setOptions({ breaks: true });
+const renderer = new marked.Renderer();
+renderer.paragraph = (text) => `<div>${text}</div>`;
+marked.setOptions({ breaks: true, renderer });
 
 function saveTabs() {
   localStorage.setItem('tabs', JSON.stringify(tabs));
@@ -103,19 +105,7 @@ function closeTab(id) {
 function renderMarkdown() {
   if (!currentTab) return;
   const raw = editor.value;
-
-  // Determine the line the caret is currently on
-  const caret = editor.selectionStart;
-  const lines = raw.split('\n');
-  const currentLineIndex = raw.slice(0, caret).split('\n').length - 1;
-
-  // Prevent headings on the active line from rendering until the user presses Enter
-  if (lines[currentLineIndex] !== undefined) {
-    lines[currentLineIndex] = lines[currentLineIndex].replace(/^(\s{0,3})(#{1,6})(\s)/, (_, ws, hashes, sp) => ws + '\\' + hashes + sp);
-  }
-
-  const processed = lines.join('\n');
-  const html = marked.parse(processed);
+  const html = marked.parse(raw);
   preview.innerHTML = html;
 
   currentTab.content = raw;
