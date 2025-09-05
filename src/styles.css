@@ -1,0 +1,157 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.window {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 4px solid transparent;
+  border-radius: 8px;
+  background: #2a2a2a padding-box, var(--border-gradient, linear-gradient(135deg,#ff00ff,#00ffff)) border-box;
+}
+
+#titlebar {
+  height: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px;
+  user-select: none;
+  -webkit-app-region: drag;
+  color: #fff;
+}
+
+#titlebar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+}
+
+#app-title {
+  font-weight: bold;
+}
+
+#settings-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#window-controls {
+  display: flex;
+}
+
+.window-btn {
+  width: 32px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+.window-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+#main-view {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+#tabs {
+  width: 150px;
+  background: rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+#tab-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+#tab-list button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 8px;
+  text-align: left;
+  color: #fff;
+  cursor: pointer;
+}
+
+#tab-list button.active {
+  background: rgba(0,0,0,0.3);
+}
+
+#add-tab {
+  border: none;
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  padding: 8px;
+  cursor: pointer;
+}
+
+#note-area {
+  flex: 1;
+  background: #303030;
+  position: relative;
+  color: #fff;
+}
+
+#preview, #editor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 10px;
+  overflow: auto;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+#editor {
+  background: transparent;
+  color: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  caret-color: #fff;
+}
+
+#preview {
+  pointer-events: none;
+  color: #fff;
+}
+
+.hidden {
+  display: none;
+}
+
+#settings-view {
+  flex: 1;
+  padding: 20px;
+  color: #fff;
+}
+
+.setting {
+  margin-bottom: 20px;
+}
+
+select {
+  padding: 5px;
+}
+
+#back-btn {
+  padding: 5px 10px;
+}

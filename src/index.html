@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>AuraNote</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app" class="window">
+    <div id="titlebar">
+      <span id="app-title">AuraNote</span>
+      <div id="titlebar-right">
+        <button id="settings-btn" title="Settings">⚙</button>
+        <div id="window-controls">
+          <button class="window-btn" id="min-btn">−</button>
+          <button class="window-btn" id="max-btn">☐</button>
+          <button class="window-btn" id="close-btn">×</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="main-view">
+      <div id="tabs">
+        <div id="tab-list"></div>
+        <button id="add-tab">+</button>
+      </div>
+      <div id="note-area">
+        <div id="preview"></div>
+        <textarea id="editor"></textarea>
+      </div>
+    </div>
+
+    <div id="settings-view" class="hidden">
+      <h2>Settings</h2>
+      <div class="setting">
+        <label for="gradient-select">Gradient Theme:</label>
+        <select id="gradient-select">
+          <option value="linear-gradient(135deg,#ff00ff,#00ffff)">Magenta / Cyan</option>
+          <option value="linear-gradient(135deg,#ff7e5f,#feb47b)">Sunset</option>
+          <option value="linear-gradient(135deg,#4facfe,#00f2fe)">Ocean</option>
+          <option value="linear-gradient(135deg,#43e97b,#38f9d7)">Lime</option>
+        </select>
+      </div>
+      <button id="back-btn">Back</button>
+    </div>
+  </div>
+
+  <script src="../node_modules/marked/marked.min.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>
