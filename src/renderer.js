@@ -10,6 +10,7 @@ const backBtn = document.getElementById('back-btn');
 const settingsView = document.getElementById('settings-view');
 const mainView = document.getElementById('main-view');
 const gradientSelect = document.getElementById('gradient-select');
+const fontSelect = document.getElementById('font-select');
 
 function createTab(title = 'New Note') {
   const id = Date.now().toString();
@@ -118,6 +119,10 @@ backBtn.addEventListener('click', () => {
 
 gradientSelect.addEventListener('change', (e) => {
   document.body.style.setProperty('--border-gradient', e.target.value);
+});
+
+fontSelect.addEventListener('change', (e) => {
+  document.body.style.setProperty('--app-font', "'" + e.target.value + "', sans-serif");
 });
 
 // Window controls

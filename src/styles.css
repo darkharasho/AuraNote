@@ -5,9 +5,11 @@ html, body {
 
 :root {
   --border-gradient: linear-gradient(135deg,#ff00ff,#00ffff);
+  --app-font: 'Nunito', sans-serif;
 }
 
 body {
+  font-family: var(--app-font);
   background: var(--border-gradient);
   padding: 2px;
   box-sizing: border-box;
@@ -27,7 +29,8 @@ body {
   height: 32px;
   display: flex;
   align-items: center;
-  padding: 0 8px;
+  padding-left: 8px;
+  padding-right: 0;
   user-select: none;
   -webkit-app-region: drag;
   color: #fff;

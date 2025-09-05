@@ -1,21 +1,24 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
+const { MicaBrowserWindow } = require('mica-electron');
 const path = require('path');
 
 let mainWindow;
 
 function createWindow() {
-  mainWindow = new BrowserWindow({
+  mainWindow = new MicaBrowserWindow({
     width: 1000,
     height: 700,
     minWidth: 600,
     minHeight: 400,
     frame: false,
     titleBarStyle: 'hidden',
-    backgroundColor: '#1e1e1e',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
   });
+
+  mainWindow.setDarkTheme();
+  mainWindow.setMicaEffect();
 
   mainWindow.loadFile(path.join(__dirname, 'src', 'index.html'));
 }
