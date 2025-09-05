@@ -103,8 +103,21 @@ function closeTab(id) {
 function renderMarkdown() {
   if (!currentTab) return;
   const raw = editor.value;
-  const html = marked.parse(raw);
+
+  // Determine the line the caret is currently on
+  const caret = editor.selectionStart;
+  const lines = raw.split('\n');
+  const currentLineIndex = raw.slice(0, caret).split('\n').length - 1;
+
+  // Prevent headings on the active line from rendering until the user presses Enter
+  if (lines[currentLineIndex] !== undefined) {
+    lines[currentLineIndex] = lines[currentLineIndex].replace(/^(\s{0,3})(#{1,6})(\s)/, (_, ws, hashes, sp) => ws + '\\' + hashes + sp);
+  }
+
+  const processed = lines.join('\n');
+  const html = marked.parse(processed);
   preview.innerHTML = html;
+
   currentTab.content = raw;
   saveTabs();
 }
