@@ -62,16 +62,16 @@ let setContent = (content) => {
 async function initMilkdown() {
   try {
     console.log('Loading Milkdown core...');
-    const { Editor, rootCtx, defaultValueCtx } = await import('https://esm.sh/@milkdown/core@7.15.5');
+    const { Editor, rootCtx, defaultValueCtx } = await import('../node_modules/@milkdown/core/lib/index.js');
     console.log('Loading Nord theme...');
-    const { nord } = await import('https://esm.sh/@milkdown/theme-nord@7.15.5');
+    const { nord } = await import('../node_modules/@milkdown/theme-nord/lib/index.js');
     console.log('Loading CommonMark preset...');
-    const { commonmark } = await import('https://esm.sh/@milkdown/preset-commonmark@7.15.5');
+    const { commonmark } = await import('../node_modules/@milkdown/preset-commonmark/lib/index.js');
     console.log('Loading listener plugin...');
-    const { listener, listenerCtx } = await import('https://esm.sh/@milkdown/plugin-listener@7.15.5');
-    const { replaceAll } = await import('https://esm.sh/@milkdown/utils@7.15.5');
-    const { keymap } = await import('https://esm.sh/@milkdown/prose/keymap@1?bundle');
-    const { TextSelection } = await import('https://esm.sh/@milkdown/prose/state@1?bundle');
+    const { listener, listenerCtx } = await import('../node_modules/@milkdown/plugin-listener/lib/index.js');
+    const { replaceAll } = await import('../node_modules/@milkdown/utils/lib/index.js');
+    const { keymap } = await import('../node_modules/@milkdown/prose/lib/keymap.js');
+    const { TextSelection } = await import('../node_modules/@milkdown/prose/lib/state.js');
 
     const exitCodeBlock = keymap({
       ArrowDown: (state, dispatch) => {

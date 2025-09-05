@@ -17,6 +17,7 @@
     "@milkdown/preset-commonmark": "^7.3.1",
     "@milkdown/theme-nord": "^7.3.1",
     "@milkdown/utils": "^7.3.1",
+    "@milkdown/prose": "^7.3.1",
     "electron": "^25.9.8",
     "mica-electron": "^1.5.16"
   }
