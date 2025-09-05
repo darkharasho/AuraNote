@@ -14,39 +14,45 @@ const logsBtn = document.getElementById('logs-btn');
 const logPanel = document.getElementById('log-panel');
 const logOutput = document.getElementById('log-output');
 
-function formatLogArg(a) {
-  if (a instanceof Error) {
-    return `${a.message}\n${a.stack}`;
+const isDev = process.env.NODE_ENV !== 'production';
+if (isDev) {
+  function formatLogArg(a) {
+    if (a instanceof Error) {
+      return `${a.message}\n${a.stack}`;
+    }
+    if (typeof a === 'object') {
+      try { return JSON.stringify(a, null, 2); }
+      catch { return String(a); }
+    }
+    return String(a);
   }
-  if (typeof a === 'object') {
-    try { return JSON.stringify(a, null, 2); }
-    catch { return String(a); }
+
+  function appendLog(level, args) {
+    const line = document.createElement('div');
+    const msg = Array.from(args).map(formatLogArg).join(' ');
+    line.textContent = `[${level}] ${msg}`;
+    logOutput.appendChild(line);
+    logOutput.scrollTop = logOutput.scrollHeight;
   }
-  return String(a);
+
+  ['log','warn','error'].forEach(level => {
+    const orig = console[level];
+    console[level] = (...args) => {
+      orig.apply(console, args);
+      appendLog(level, args);
+    };
+  });
+
+  window.addEventListener('error', (e) => appendLog('error', [e.error || e.message]));
+  window.addEventListener('unhandledrejection', (e) => appendLog('error', [e.reason]));
+
+  logsBtn.addEventListener('click', () => {
+    logPanel.classList.toggle('hidden');
+  });
+} else {
+  logsBtn.remove();
+  logPanel.remove();
 }
-
-function appendLog(level, args) {
-  const line = document.createElement('div');
-  const msg = Array.from(args).map(formatLogArg).join(' ');
-  line.textContent = `[${level}] ${msg}`;
-  logOutput.appendChild(line);
-  logOutput.scrollTop = logOutput.scrollHeight;
-}
-
-['log','warn','error'].forEach(level => {
-  const orig = console[level];
-  console[level] = (...args) => {
-    orig.apply(console, args);
-    appendLog(level, args);
-  };
-});
-
-window.addEventListener('error', (e) => appendLog('error', [e.error || e.message]));
-window.addEventListener('unhandledrejection', (e) => appendLog('error', [e.reason]));
-
-logsBtn.addEventListener('click', () => {
-  logPanel.classList.toggle('hidden');
-});
 
 let editor = null;
 let setContent = (content) => {
@@ -64,6 +70,26 @@ async function initMilkdown() {
     console.log('Loading listener plugin...');
     const { listener, listenerCtx } = await import('https://esm.sh/@milkdown/plugin-listener@7.15.5');
     const { replaceAll } = await import('https://esm.sh/@milkdown/utils@7.15.5');
+    const { keymap } = await import('https://esm.sh/@milkdown/prose/keymap@1?bundle');
+    const { TextSelection } = await import('https://esm.sh/@milkdown/prose/state@1?bundle');
+
+    const exitCodeBlock = keymap({
+      ArrowDown: (state, dispatch) => {
+        const { selection } = state;
+        if (!selection.empty) return false;
+        const $pos = selection.$head;
+        if ($pos.parent.type.name !== 'code_block') return false;
+        if ($pos.parentOffset < $pos.parent.content.size) return false;
+        const pos = $pos.after();
+        const paragraph = state.schema.nodes.paragraph.create();
+        if (dispatch) {
+          let tr = state.tr.insert(pos, paragraph);
+          tr = tr.setSelection(TextSelection.create(tr.doc, pos + 1));
+          dispatch(tr);
+        }
+        return true;
+      }
+    });
 
     console.log('Creating Milkdown editor...');
     editor = await Editor.make()
@@ -74,6 +100,7 @@ async function initMilkdown() {
       .use(nord)
       .use(commonmark)
       .use(listener)
+      .use(exitCodeBlock)
       .create();
 
     editor.action((ctx) => {
