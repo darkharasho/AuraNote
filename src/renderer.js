@@ -62,16 +62,22 @@ let setContent = (content) => {
 async function initMilkdown() {
   try {
     console.log('Loading Milkdown core...');
-    const { Editor, rootCtx, defaultValueCtx } = await import('https://esm.sh/@milkdown/core@7.3.1?bundle');
+    const {
+      Editor,
+      rootCtx,
+      defaultValueCtx,
+      editorViewOptionsCtx,
+      prosePluginsCtx,
+    } = await import('../node_modules/@milkdown/core/lib/index.js');
     console.log('Loading Nord theme...');
-    const { nord } = await import('https://esm.sh/@milkdown/theme-nord@7.3.1?bundle');
+    const { nord } = await import('../node_modules/@milkdown/theme-nord/lib/index.js');
     console.log('Loading CommonMark preset...');
-    const { commonmark } = await import('https://esm.sh/@milkdown/preset-commonmark@7.3.1?bundle');
+    const { commonmark } = await import('../node_modules/@milkdown/preset-commonmark/lib/index.js');
     console.log('Loading listener plugin...');
-    const { listener, listenerCtx } = await import('https://esm.sh/@milkdown/plugin-listener@7.3.1?bundle');
-    const { replaceAll } = await import('https://esm.sh/@milkdown/utils@7.3.1?bundle');
-    const { keymap } = await import('https://esm.sh/prosemirror-keymap@1.2.2?bundle');
-    const { TextSelection } = await import('https://esm.sh/prosemirror-state@1.4.3?bundle');
+    const { listener, listenerCtx } = await import('../node_modules/@milkdown/plugin-listener/lib/index.js');
+    const { replaceAll } = await import('../node_modules/@milkdown/utils/lib/index.js');
+    const { keymap } = await import('../node_modules/prosemirror-keymap/dist/index.js');
+    const { TextSelection } = await import('../node_modules/prosemirror-state/dist/index.js');
 
     const exitCodeBlock = keymap({
       ArrowDown: (state, dispatch) => {
@@ -96,11 +102,12 @@ async function initMilkdown() {
       .config((ctx) => {
         ctx.set(rootCtx, editorContainer);
         ctx.set(defaultValueCtx, currentTab?.content || '');
+        ctx.set(editorViewOptionsCtx, {});
+        ctx.update(prosePluginsCtx, (ps) => ps.concat(exitCodeBlock));
       })
       .use(nord)
       .use(commonmark)
       .use(listener)
-      .use(exitCodeBlock)
       .create();
 
     editor.action((ctx) => {
