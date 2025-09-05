@@ -179,6 +179,8 @@ function renderTabs() {
     const titleSpan = document.createElement('span');
     titleSpan.className = 'title';
     titleSpan.textContent = tab.title;
+    titleSpan.title = tab.title;
+    tabEl.title = tab.title;
 
     const startRename = (e) => {
       e.stopPropagation();
