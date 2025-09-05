@@ -70,8 +70,8 @@ async function initMilkdown() {
     console.log('Loading listener plugin...');
     const { listener, listenerCtx } = await import('https://esm.sh/@milkdown/plugin-listener@7.3.1?bundle');
     const { replaceAll } = await import('https://esm.sh/@milkdown/utils@7.3.1?bundle');
-    const { keymap } = await import('https://esm.sh/@milkdown/prose/keymap@7.3.1?bundle');
-    const { TextSelection } = await import('https://esm.sh/@milkdown/prose/state@7.3.1?bundle');
+    const { keymap } = await import('https://esm.sh/prosemirror-keymap@1.2.2?bundle');
+    const { TextSelection } = await import('https://esm.sh/prosemirror-state@1.4.3?bundle');
 
     const exitCodeBlock = keymap({
       ArrowDown: (state, dispatch) => {
