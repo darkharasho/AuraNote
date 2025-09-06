@@ -278,15 +278,19 @@ function closeTab(id) {
 
 addTabBtn.addEventListener('click', () => createTab());
 
-settingsBtn.addEventListener('click', () => {
-  mainView.classList.add('hidden');
-  settingsView.classList.remove('hidden');
-});
+function toggleSettings() {
+  const isOpen = !settingsView.classList.contains('hidden');
+  if (isOpen) {
+    settingsView.classList.add('hidden');
+    mainView.classList.remove('hidden');
+  } else {
+    mainView.classList.add('hidden');
+    settingsView.classList.remove('hidden');
+  }
+}
 
-backBtn.addEventListener('click', () => {
-  settingsView.classList.add('hidden');
-  mainView.classList.remove('hidden');
-});
+settingsBtn.addEventListener('click', toggleSettings);
+backBtn.addEventListener('click', toggleSettings);
 
 gradientSelect.addEventListener('change', (e) => {
   document.body.style.setProperty('--border-gradient', e.target.value);

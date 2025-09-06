@@ -5,7 +5,7 @@ html, body {
 
 :root {
   --border-gradient: linear-gradient(135deg,#ff40ff,#40ffff);
-  --app-font: 'Nunito', sans-serif;
+  --app-font: 'Poppins', sans-serif;
 }
 
 body {
@@ -276,21 +276,40 @@ body {
 }
 
 #settings-view {
-  flex: 1;
+  position: absolute;
+  top: 32px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #303030;
   padding: 20px;
   color: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  z-index: 1000;
 }
 
 .setting {
   margin-bottom: 20px;
 }
 
-select {
+#settings-view select {
   padding: 5px;
+  background: #222;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 4px;
+}
+
+#settings-view select option {
+  background: #222;
+  color: #fff;
 }
 
 #back-btn {
   padding: 5px 10px;
+  align-self: flex-start;
 }
 
 /* Minimal dark scrollbars */
