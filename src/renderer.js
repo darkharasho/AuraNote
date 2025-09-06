@@ -16,6 +16,7 @@ const settingsView = document.getElementById('settings-view');
 settingsView.classList.add('hidden');
 const gradientSelect = document.getElementById('gradient-select');
 const gradientPreview = document.getElementById('gradient-preview');
+const gradientOutlineSelect = document.getElementById('gradient-outline-select');
 const glowSelect = document.getElementById('glow-select');
 const fontSelect = document.getElementById('font-select');
 const themeSelect = document.getElementById('theme-select');
@@ -40,6 +41,7 @@ if (savedFont) {
 }
 
 const defaultGlowOpacity = '0.35';
+const defaultGradientOpacity = '0.5';
 
 function applyGlow(enabled, persist = true) {
   document.body.style.setProperty('--glow-opacity', enabled ? defaultGlowOpacity : '0');
@@ -48,9 +50,20 @@ function applyGlow(enabled, persist = true) {
   }
 }
 
+function applyGradientOutline(enabled, persist = true) {
+  document.body.style.setProperty('--gradient-opacity', enabled ? defaultGradientOpacity : '0');
+  if (persist) {
+    localStorage.setItem('gradient-outline', enabled ? 'on' : 'off');
+  }
+}
+
 const savedGlow = localStorage.getItem('glow') || 'on';
 glowSelect.value = savedGlow;
 applyGlow(savedGlow === 'on', false);
+
+const savedGradientOutline = localStorage.getItem('gradient-outline') || 'on';
+gradientOutlineSelect.value = savedGradientOutline;
+applyGradientOutline(savedGradientOutline === 'on', false);
 
 function applyTheme(theme, persist = true) {
   document.body.classList.remove('theme-dark', 'theme-light', 'theme-acrylic');
@@ -79,6 +92,7 @@ function syncDropdownWidths() {
     fontSelect.style.width = `${width}px`;
     themeSelect.style.width = `${width}px`;
     glowSelect.style.width = `${width}px`;
+    gradientOutlineSelect.style.width = `${width}px`;
   }
 }
 syncDropdownWidths();
@@ -367,6 +381,10 @@ gradientSelect.addEventListener('change', (e) => {
 
 glowSelect.addEventListener('change', (e) => {
   applyGlow(e.target.value === 'on');
+});
+
+gradientOutlineSelect.addEventListener('change', (e) => {
+  applyGradientOutline(e.target.value === 'on');
 });
 
 fontSelect.addEventListener('change', (e) => {

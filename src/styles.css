@@ -6,6 +6,7 @@ html, body {
 :root {
   --border-gradient: linear-gradient(135deg,#ff40ff,#40ffff);
   --app-font: 'Poppins', sans-serif;
+  --gradient-opacity: 0.5;
   --glow-opacity: 0.35;
 }
 
@@ -220,7 +221,7 @@ body {
   padding: 1px;
   border-radius: 8px;
   background: var(--border-gradient);
-  opacity: var(--glow-opacity);
+  opacity: var(--gradient-opacity);
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -228,17 +229,6 @@ body {
           mask-composite: exclude;
   pointer-events: none;
   z-index: 1;
-}
-.tab.active::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border-radius: 10px;
-  background: var(--border-gradient);
-  filter: blur(8px);
-  opacity: var(--glow-opacity);
-  z-index: -1;
-  pointer-events: none;
 }
 .tab .title {
   flex: 1;
@@ -315,7 +305,7 @@ body {
   padding: 1px;
   border-radius: 12px;
   background: var(--border-gradient);
-  opacity: var(--glow-opacity);
+  opacity: var(--gradient-opacity);
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
