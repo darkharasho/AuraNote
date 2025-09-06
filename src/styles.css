@@ -209,7 +209,6 @@ body {
   margin-right: 4px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-  z-index: 0;
 }
 
  .tab.active::before {
@@ -227,19 +226,6 @@ body {
   pointer-events: none;
   z-index: 1;
 }
-
- .tab.active::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 8px;
-  background: var(--border-gradient);
-  filter: blur(6px);
-  opacity: 0.6;
-  z-index: -1;
-  pointer-events: none;
- }
-
 .tab .title {
   flex: 1;
   overflow: hidden;
@@ -305,7 +291,7 @@ body {
   color: var(--text-color);
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-  overflow: visible;
+  overflow: hidden;
 }
 
 #note-area::before {
@@ -323,20 +309,6 @@ body {
   pointer-events: none;
   z-index: 1;
 }
-
-#note-area::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 12px;
-  background: var(--border-gradient);
-  filter: blur(12px);
-  opacity: 0.5;
-  z-index: -1;
-  pointer-events: none;
-}
-
-
 #editor {
   height: 100%;
   padding: 10px;
