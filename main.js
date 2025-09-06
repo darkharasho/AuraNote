@@ -83,6 +83,10 @@ function applyTheme(win, theme) {
       win.setDarkTheme();
       win.setMicaEffect();
       break;
+    case 'deep-ocean':
+      win.setDarkTheme();
+      win.setMicaEffect();
+      break;
     case 'dark-mica':
     default:
       win.setDarkTheme();
