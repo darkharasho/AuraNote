@@ -1,4 +1,9 @@
-let tabs = JSON.parse(localStorage.getItem('tabs') || '[]');
+let tabs = [];
+try {
+  tabs = JSON.parse(localStorage.getItem('tabs') || '[]');
+} catch {
+  localStorage.removeItem('tabs');
+}
 let currentTab = null;
 
 const tabList = document.getElementById('tab-list');
@@ -12,6 +17,7 @@ settingsView.classList.add('hidden');
 const gradientSelect = document.getElementById('gradient-select');
 const gradientPreview = document.getElementById('gradient-preview');
 const fontSelect = document.getElementById('font-select');
+const themeSelect = document.getElementById('theme-select');
 const logsBtn = document.getElementById('logs-btn');
 const logPanel = document.getElementById('log-panel');
 const logOutput = document.getElementById('log-output');
@@ -32,10 +38,32 @@ if (savedFont) {
   document.body.style.setProperty('--app-font', "'" + savedFont + "', sans-serif");
 }
 
+function applyTheme(theme, persist = true) {
+  document.body.classList.remove('theme-dark', 'theme-light', 'theme-acrylic');
+  if (theme === 'light-mica') {
+    document.body.classList.add('theme-light');
+  } else if (theme === 'acrylic') {
+    document.body.classList.add('theme-acrylic');
+  } else {
+    document.body.classList.add('theme-dark');
+  }
+  if (window.api?.setTheme) {
+    window.api.setTheme(theme);
+  }
+  if (persist) {
+    localStorage.setItem('theme', theme);
+  }
+}
+
+const savedTheme = localStorage.getItem('theme') || 'dark-mica';
+themeSelect.value = savedTheme;
+applyTheme(savedTheme, false);
+
 function syncDropdownWidths() {
   const width = gradientSelect.offsetWidth;
   if (width) {
     fontSelect.style.width = `${width}px`;
+    themeSelect.style.width = `${width}px`;
   }
 }
 syncDropdownWidths();
@@ -51,7 +79,7 @@ noteArea.addEventListener('click', async (e) => {
   view.focus();
 });
 
-const isDev = process.env.NODE_ENV !== 'production';
+const isDev = typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production';
 if (isDev) {
   function formatLogArg(a) {
     if (a instanceof Error) {
@@ -327,12 +355,16 @@ fontSelect.addEventListener('change', (e) => {
   localStorage.setItem('font', e.target.value);
 });
 
+themeSelect.addEventListener('change', (e) => {
+  applyTheme(e.target.value);
+});
+
 const minBtn = document.getElementById('min-btn');
 const maxBtn = document.getElementById('max-btn');
 const closeBtn = document.getElementById('close-btn');
 
-minBtn.addEventListener('click', () => window.api.windowControl('minimize'));
-maxBtn.addEventListener('click', () => window.api.windowControl('maximize'));
+minBtn.addEventListener('click', () => window.api?.windowControl('minimize'));
+maxBtn.addEventListener('click', () => window.api?.windowControl('maximize'));
 closeBtn.addEventListener('click', () => {
   if (window.api?.windowControl) {
     window.api.windowControl('close');
