@@ -14,6 +14,15 @@ const fontSelect = document.getElementById('font-select');
 const logsBtn = document.getElementById('logs-btn');
 const logPanel = document.getElementById('log-panel');
 const logOutput = document.getElementById('log-output');
+noteArea.addEventListener('click', async (e) => {
+  if (!editor) return;
+  if (e.target !== noteArea && e.target !== editorContainer) return;
+  const { TextSelection } = await import('@milkdown/prose/state');
+  const view = editor.view;
+  const end = view.state.doc.content.size;
+  view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, end)));
+  view.focus();
+});
 
 const isDev = process.env.NODE_ENV !== 'production';
 if (isDev) {
@@ -245,8 +254,6 @@ function renderTabs() {
     tabList.appendChild(tabEl);
   });
 
-  const firstActive = tabs[0]?.id === currentTab?.id;
-  noteArea.classList.toggle('attached', firstActive);
 }
 
 function switchTab(id) {
