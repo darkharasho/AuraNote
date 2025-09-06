@@ -76,6 +76,122 @@ body.theme-acrylic {
   --editor-pre-bg: rgba(0,0,0,0.4);
 }
 
+body.theme-kurzgesagt {
+  --text-color: #fff;
+  --titlebar-bg: linear-gradient(90deg, rgba(14,18,40,0.95), rgba(34,39,85,0.95));
+  --main-bg:
+    radial-gradient(circle at 5% 10%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 15% 30%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 25% 70%, #fff 1.5px, transparent 2.5px),
+    radial-gradient(circle at 35% 20%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 45% 50%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 55% 80%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 65% 10%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 75% 60%, #fff 1.5px, transparent 2.5px),
+    radial-gradient(circle at 85% 40%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 95% 90%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 10% 50%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 20% 80%, #fff 1.5px, transparent 2.5px),
+    radial-gradient(circle at 30% 40%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 40% 10%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 50% 70%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 60% 30%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 70% 90%, #fff 1.5px, transparent 2.5px),
+    radial-gradient(circle at 80% 50%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 90% 20%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 60% 95%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 8% 60%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 18% 10%, #fff 1.5px, transparent 2.5px),
+    radial-gradient(circle at 28% 85%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 38% 35%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 48% 5%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 58% 55%, #fff 1.5px, transparent 2.5px),
+    radial-gradient(circle at 68% 25%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 78% 75%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 88% 45%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 98% 15%, #fff 1.5px, transparent 2.5px),
+    radial-gradient(circle at 5% 40%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 15% 90%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 25% 15%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 35% 65%, #fff 1.5px, transparent 2.5px),
+    radial-gradient(circle at 45% 25%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 55% 95%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 65% 45%, #fff 2px, transparent 3px),
+    radial-gradient(circle at 75% 5%, #fff 1px, transparent 2px),
+    radial-gradient(circle at 85% 85%, #fff 1.5px, transparent 2.5px),
+    radial-gradient(circle at 20% 20%, rgba(61,169,252,0.2), transparent 65%),
+    radial-gradient(circle at 80% 80%, rgba(255,46,205,0.2), transparent 65%),
+    linear-gradient(180deg,#0d1b2a 0%,#141b3a 100%);
+  --tab-hover-bg: rgba(255,255,255,0.1);
+  --tab-active-bg: linear-gradient(135deg,#ff2ec7,#00d9ff);
+  --rename-bg: rgba(0,0,0,0.5);
+  --add-tab-hover-bg: rgba(255,255,255,0.1);
+  --add-tab-active-bg: rgba(255,255,255,0.2);
+  --note-bg: linear-gradient(135deg, rgba(35,41,79,0.85), rgba(23,27,61,0.85));
+  --settings-bg: rgba(23,27,61,0.85);
+  --select-bg: #23294f;
+  --select-text: #fff;
+  --select-border: #ffdf40;
+  --select-option-bg: #23294f;
+  --btn-hover-bg: rgba(255,223,64,0.25);
+  --scrollbar-thumb: rgba(255,46,205,0.5);
+  --scrollbar-thumb-hover: rgba(0,217,255,0.7);
+  --log-bg: rgba(6,8,18,0.9);
+  --editor-pre-bg: rgba(0,0,0,0.4);
+  --border-gradient: linear-gradient(135deg,#ff2ec7,#00d9ff,#ffdf40);
+}
+
+body.theme-kurzgesagt #main-view::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1200px;
+  height: 1200px;
+  background:
+    radial-gradient(ellipse at center, #fff 0%, #ffdf40 10%, #ff8a55 25%, #ff2ec7 45%, transparent 60%),
+    radial-gradient(ellipse at center, rgba(0,217,255,0.4) 63%, transparent 66%),
+    radial-gradient(ellipse at center, rgba(255,46,205,0.4) 70%, transparent 73%);
+  transform: translate(-50%, -50%) scaleX(1.8) scaleY(0.7);
+  filter: blur(40px);
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 0;
+  animation: rotateGalaxy 60s linear infinite;
+}
+
+body.theme-kurzgesagt #main-view::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1100px;
+  height: 1100px;
+  background: conic-gradient(
+      from -20deg,
+      rgba(0,217,255,0.8) 0deg 30deg,
+      transparent 30deg 60deg,
+      rgba(255,46,205,0.8) 60deg 90deg,
+      transparent 90deg 120deg,
+      rgba(0,217,255,0.8) 120deg 150deg,
+      transparent 150deg 180deg,
+      rgba(255,46,205,0.8) 180deg 210deg,
+      transparent 210deg 240deg,
+      rgba(0,217,255,0.8) 240deg 270deg,
+      transparent 270deg 300deg,
+      rgba(255,46,205,0.8) 300deg 330deg,
+      transparent 330deg 360deg
+    );
+  transform: translate(-50%, -50%) scaleX(1.8) scaleY(0.7);
+  -webkit-mask: radial-gradient(ellipse at center, transparent 62%, #000 62%, #000 65%, transparent 65%);
+          mask: radial-gradient(ellipse at center, transparent 62%, #000 62%, #000 65%, transparent 65%);
+  mix-blend-mode: screen;
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 0;
+  animation: rotateGalaxy 120s linear infinite;
+}
+
 body {
   font-family: var(--app-font);
   background: transparent;
@@ -203,6 +319,12 @@ body {
   background: var(--main-bg);
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
+  position: relative;
+}
+
+#main-view > * {
+  position: relative;
+  z-index: 1;
 }
 
 #tabs {
@@ -334,7 +456,8 @@ body {
 }
 
 body.theme-dark .folder-icon svg,
-body.theme-acrylic .folder-icon svg {
+body.theme-acrylic .folder-icon svg,
+body.theme-kurzgesagt .folder-icon svg {
   fill: #fff;
 }
 
@@ -503,6 +626,15 @@ body.theme-light .folder-icon svg {
 @keyframes fadeout {
   from { opacity: 1; }
   to { opacity: 0; }
+}
+
+@keyframes rotateGalaxy {
+  from {
+    transform: translate(-50%, -50%) scaleX(1.8) scaleY(0.7) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) scaleX(1.8) scaleY(0.7) rotate(360deg);
+  }
 }
 
 #editor * {
