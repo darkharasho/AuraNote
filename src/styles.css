@@ -552,6 +552,8 @@ body.theme-light .folder-icon svg {
 
 #settings-content {
   height: 100%;
+  padding: 24px;
+  box-sizing: border-box;
 }
 
 .settings-section {
@@ -580,10 +582,42 @@ body.theme-light .folder-icon svg {
   gap: 12px;
 }
 
+.import-column p,
+.export-column p {
+  margin: 0;
+}
+
+.gradient-btn {
+  padding: 8px 16px;
+  border: none;
+  color: #fff;
+  background: var(--border-gradient);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.gradient-btn:hover {
+  opacity: 0.9;
+}
+
+.export-list {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--settings-bg);
+  padding: 8px;
+  border-radius: 8px;
+}
+
 .export-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--select-border);
+}
+
+.export-item:last-child {
+  border-bottom: none;
 }
 
 

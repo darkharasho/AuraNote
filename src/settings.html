@@ -127,9 +127,13 @@
           <div id="section-io" class="settings-section">
             <div class="import-export">
               <div class="import-column">
-                <button id="import-btn">Import .md</button>
+                <p>Select a Markdown (.md) file to import as a new tab.</p>
+                <button class="gradient-btn" id="import-btn">Choose File</button>
               </div>
-              <div class="export-column" id="export-list"></div>
+              <div class="export-column">
+                <p>Select a tab to export as a Markdown file.</p>
+                <div id="export-list" class="export-list"></div>
+              </div>
             </div>
           </div>
         </div>

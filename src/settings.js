@@ -105,6 +105,7 @@ function renderExportList() {
     span.textContent = tab.title;
     const btn = document.createElement('button');
     btn.textContent = 'Export';
+    btn.className = 'gradient-btn';
     btn.addEventListener('click', () => window.api.exportTab(tab));
     div.appendChild(span);
     div.appendChild(btn);
@@ -136,4 +137,4 @@ const closeBtn = document.getElementById('close-btn');
 
 minBtn.addEventListener('click', () => window.api.windowControl('minimize'));
 maxBtn.addEventListener('click', () => window.api.windowControl('maximize'));
-closeBtn.addEventListener('click', () => window.api.windowControl('close'));
+closeBtn.addEventListener('click', () => window.api.openMain());

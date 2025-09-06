@@ -4,7 +4,6 @@ const path = require('path');
 const fs = require('fs');
 
 let mainWindow;
-let settingsWindow;
 let currentTheme = 'dark-mica';
 
 function createWindow() {
@@ -91,42 +90,17 @@ function applyTheme(win, theme) {
 ipcMain.handle('set-theme', (event, theme) => {
   currentTheme = theme;
   applyTheme(mainWindow, theme);
-  applyTheme(settingsWindow, theme);
+});
+ipcMain.handle('open-settings', () => {
+  if (!mainWindow) return;
+  applyTheme(mainWindow, currentTheme);
+  mainWindow.loadFile(path.join(__dirname, 'src', 'settings.html'));
 });
 
-ipcMain.handle('open-settings', () => {
-  if (settingsWindow) {
-    settingsWindow.focus();
-    return;
-  }
-  settingsWindow = new MicaBrowserWindow({
-    width: 900,
-    height: 600,
-    minWidth: 600,
-    minHeight: 400,
-    frame: false,
-    titleBarStyle: 'hidden',
-    show: false,
-    transparent: true,
-    backgroundColor: '#00000000',
-    icon: path.join(__dirname, 'media', 'AuraNote.ico'),
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: false,
-      contextIsolation: true,
-    }
-  });
-  applyTheme(settingsWindow, currentTheme);
-  settingsWindow.setRoundedCorner();
-  settingsWindow.loadFile(path.join(__dirname, 'src', 'settings.html'));
-  settingsWindow.on('closed', () => {
-    settingsWindow = null;
-    mainWindow.show();
-  });
-  settingsWindow.webContents.once('dom-ready', () => {
-    settingsWindow.show();
-    mainWindow.hide();
-  });
+ipcMain.handle('open-main', () => {
+  if (!mainWindow) return;
+  applyTheme(mainWindow, currentTheme);
+  mainWindow.loadFile(path.join(__dirname, 'src', 'index.html'));
 });
 
 ipcMain.handle('import-md', async () => {
