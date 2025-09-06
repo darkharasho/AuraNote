@@ -38,7 +38,9 @@ function createWindow() {
 
 app.whenReady().then(() => {
   createWindow();
-  initAutoUpdate();
+  if (app.isPackaged) {
+    initAutoUpdate();
+  }
 });
 
 app.on('window-all-closed', () => {
@@ -136,3 +138,5 @@ ipcMain.handle('export-md', async (event, tab) => {
   fs.writeFileSync(filePath, tab.content, 'utf8');
   return true;
 });
+
+ipcMain.handle('app:version', () => app.getVersion());
