@@ -123,15 +123,6 @@ const rawEditor = document.getElementById('raw-editor');
 const renderedView = document.getElementById('rendered-view');
 const rawView = document.getElementById('raw-view');
 const settingsBtn = document.getElementById('settings-btn');
-const closeSettingsBtn = document.getElementById('close-settings');
-const settingsView = document.getElementById('settings-view');
-settingsView.classList.add('hidden');
-const gradientSelect = document.getElementById('gradient-select');
-const gradientPreview = document.getElementById('gradient-preview');
-const gradientOutlineSelect = document.getElementById('gradient-outline-select');
-const glowSelect = document.getElementById('glow-select');
-const fontSelect = document.getElementById('font-select');
-const themeSelect = document.getElementById('theme-select');
 const logsBtn = document.getElementById('logs-btn');
 const logPanel = document.getElementById('log-panel');
 const logOutput = document.getElementById('log-output');
@@ -139,16 +130,11 @@ const logOutput = document.getElementById('log-output');
 // Restore persisted settings
 const savedGradient = localStorage.getItem('gradient');
 if (savedGradient) {
-  gradientSelect.value = savedGradient;
   document.body.style.setProperty('--border-gradient', savedGradient);
-  gradientPreview.style.background = savedGradient;
-} else {
-  gradientPreview.style.background = gradientSelect.value;
 }
 
 const savedFont = localStorage.getItem('font');
 if (savedFont) {
-  fontSelect.value = savedFont;
   document.body.style.setProperty('--app-font', "'" + savedFont + "', sans-serif");
 }
 
@@ -170,11 +156,9 @@ function applyGradientOutline(enabled, persist = true) {
 }
 
 const savedGlow = localStorage.getItem('glow') || 'on';
-glowSelect.value = savedGlow;
 applyGlow(savedGlow === 'on', false);
 
 const savedGradientOutline = localStorage.getItem('gradient-outline') || 'on';
-gradientOutlineSelect.value = savedGradientOutline;
 applyGradientOutline(savedGradientOutline === 'on', false);
 
 function applyTheme(theme, persist = true) {
@@ -195,21 +179,41 @@ function applyTheme(theme, persist = true) {
 }
 
 const savedTheme = localStorage.getItem('theme') || 'dark-mica';
-themeSelect.value = savedTheme;
 applyTheme(savedTheme, false);
 
-function syncDropdownWidths() {
-  const width = gradientSelect.offsetWidth;
-  if (width) {
-    fontSelect.style.width = `${width}px`;
-    themeSelect.style.width = `${width}px`;
-    glowSelect.style.width = `${width}px`;
-    gradientOutlineSelect.style.width = `${width}px`;
+window.addEventListener('storage', (e) => {
+  switch (e.key) {
+    case 'gradient':
+      document.body.style.setProperty('--border-gradient', e.newValue);
+      break;
+    case 'font':
+      document.body.style.setProperty('--app-font', "'" + e.newValue + "', sans-serif");
+      break;
+    case 'glow':
+      applyGlow(e.newValue === 'on', false);
+      break;
+    case 'gradient-outline':
+      applyGradientOutline(e.newValue === 'on', false);
+      break;
+    case 'theme':
+      applyTheme(e.newValue, false);
+      break;
+    case 'tabs':
+    case 'folders':
+      tabs = JSON.parse(localStorage.getItem('tabs') || '[]');
+      folders = JSON.parse(localStorage.getItem('folders') || '[]');
+      if (!tabs.find(t => t.id === currentTab?.id)) {
+        currentTab = tabs[0] || null;
+        const md = currentTab?.content || '';
+        rawEditor.value = md;
+        setContent(md);
+      }
+      renderTabs();
+      break;
   }
-}
-syncDropdownWidths();
-window.addEventListener('load', syncDropdownWidths);
-window.addEventListener('resize', syncDropdownWidths);
+});
+
+// no dropdowns to sync in main window
 noteArea.addEventListener('click', async (e) => {
   if (!editor) return;
   if (e.target !== noteArea && e.target !== editorContainer) return;
@@ -730,6 +734,9 @@ function switchTab(id) {
 function closeTab(id) {
   const index = tabs.findIndex(t => t.id === id);
   if (index === -1) return;
+  if (localStorage.getItem('confirm-close') === 'on') {
+    if (!confirm('Close this tab?')) return;
+  }
   tabs.splice(index, 1);
   if (currentTab?.id === id) {
     currentTab = tabs[0] || null;
@@ -760,38 +767,8 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-function toggleSettings() {
-  const nowHidden = settingsView.classList.toggle('hidden');
-  if (!nowHidden) {
-    syncDropdownWidths();
-  }
-}
-
-settingsBtn.addEventListener('click', toggleSettings);
-closeSettingsBtn.addEventListener('click', toggleSettings);
-
-gradientSelect.addEventListener('change', (e) => {
-  document.body.style.setProperty('--border-gradient', e.target.value);
-  gradientPreview.style.background = e.target.value;
-  localStorage.setItem('gradient', e.target.value);
-  syncDropdownWidths();
-});
-
-glowSelect.addEventListener('change', (e) => {
-  applyGlow(e.target.value === 'on');
-});
-
-gradientOutlineSelect.addEventListener('change', (e) => {
-  applyGradientOutline(e.target.value === 'on');
-});
-
-fontSelect.addEventListener('change', (e) => {
-  document.body.style.setProperty('--app-font', "'" + e.target.value + "', sans-serif");
-  localStorage.setItem('font', e.target.value);
-});
-
-themeSelect.addEventListener('change', (e) => {
-  applyTheme(e.target.value);
+settingsBtn.addEventListener('click', () => {
+  window.api.openSettings();
 });
 
 const minBtn = document.getElementById('min-btn');

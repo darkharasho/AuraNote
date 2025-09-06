@@ -520,44 +520,17 @@ body.theme-light .folder-icon svg {
   display: none;
 }
 
-#settings-view {
-  position: absolute;
-  top: 32px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 30px;
-  color: var(--text-color);
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  overflow: auto;
-  z-index: 1000;
-  background: var(--settings-bg);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-}
-
-#settings-view.hidden {
-  display: none;
-}
-
 .setting {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-#settings-view h2 {
-  font-size: 24px;
-  margin: 0;
-}
-
 .setting label {
   font-size: 14px;
 }
 
-#settings-view select {
+.setting select {
   padding: 8px;
   background: var(--select-bg);
   color: var(--select-text);
@@ -566,29 +539,87 @@ body.theme-light .folder-icon svg {
   font-size: 14px;
 }
 
-#settings-view select:focus {
+.setting select:focus {
   outline: none;
   border-color: #777;
   box-shadow: none;
 }
 
-#settings-view select option {
+.setting select option {
   background: var(--select-option-bg);
   color: var(--select-text);
 }
 
-
-#close-settings {
-  position: absolute;
-  top: 8px;
-  right: 12px;
-  background: transparent;
-  border: none;
-  color: var(--text-color);
-  font-size: 20px;
-  cursor: pointer;
-  padding: 4px;
+#settings-content {
+  height: 100%;
+  padding: 24px;
+  box-sizing: border-box;
 }
+
+.settings-section {
+  display: none;
+  height: 100%;
+  overflow: auto;
+}
+
+.settings-section.active {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.import-export {
+  display: flex;
+  gap: 24px;
+  height: 100%;
+}
+
+.import-column,
+.export-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.import-column p,
+.export-column p {
+  margin: 0;
+}
+
+.gradient-btn {
+  padding: 8px 16px;
+  border: none;
+  color: #fff;
+  background: var(--border-gradient);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.gradient-btn:hover {
+  opacity: 0.9;
+}
+
+.export-list {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--settings-bg);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.export-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--select-border);
+}
+
+.export-item:last-child {
+  border-bottom: none;
+}
+
 
 .gradient-row {
   display: flex;
