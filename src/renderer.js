@@ -11,6 +11,7 @@ try {
   localStorage.removeItem('folders');
 }
 let currentTab = null;
+let isRawMode = false;
 
 const tabList = document.getElementById('tab-list');
 const addTabBtn = document.getElementById('add-tab');
@@ -118,6 +119,9 @@ tabsContainer.addEventListener('contextmenu', (e) => {
   ]);
 });
 const noteArea = document.getElementById('note-area');
+const rawEditor = document.getElementById('raw-editor');
+const renderedView = document.getElementById('rendered-view');
+const rawView = document.getElementById('raw-view');
 const settingsBtn = document.getElementById('settings-btn');
 const closeSettingsBtn = document.getElementById('close-settings');
 const settingsView = document.getElementById('settings-view');
@@ -261,6 +265,43 @@ let ignoreUpdate = false;
 // Defer injecting markdown into the DOM until Milkdown is ready.
 // Otherwise the raw markdown flashes before the editor mounts.
 let setContent = () => {};
+
+function setRawMode(on) {
+  if (on === isRawMode) return;
+  isRawMode = on;
+  if (on) {
+    rawEditor.value = currentTab?.content || '';
+    editorContainer.classList.add('hidden');
+    rawEditor.classList.remove('hidden');
+    rawView.classList.add('active');
+    renderedView.classList.remove('active');
+  } else {
+    setContent(rawEditor.value);
+    editorContainer.classList.remove('hidden');
+    rawEditor.classList.add('hidden');
+    renderedView.classList.add('active');
+    rawView.classList.remove('active');
+  }
+}
+
+renderedView.addEventListener('click', () => setRawMode(false));
+rawView.addEventListener('click', () => setRawMode(true));
+
+rawEditor.addEventListener('input', () => {
+  if (!currentTab) return;
+  const md = rawEditor.value;
+  currentTab.content = md;
+  const firstLine = md.trimStart().split('\n')[0];
+  const m = firstLine.match(/^#{1,6}\s+(.*)$/);
+  if (m) {
+    const name = m[1].trim();
+    if (name && currentTab.title !== name) {
+      currentTab.title = name;
+      renderTabs();
+    }
+  }
+  saveTabs();
+});
 
 async function initMilkdown() {
   try {
@@ -681,6 +722,7 @@ function renderTabs() {
 function switchTab(id) {
   currentTab = tabs.find(t => t.id === id);
   const md = currentTab?.content || '';
+  rawEditor.value = md;
   setContent(md);
   renderTabs();
 }
@@ -692,6 +734,7 @@ function closeTab(id) {
   if (currentTab?.id === id) {
     currentTab = tabs[0] || null;
     const md = currentTab?.content || '';
+    rawEditor.value = md;
     setContent(md);
   }
   saveTabs();
