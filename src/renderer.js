@@ -27,7 +27,11 @@ document.body.appendChild(tabBarContextMenu);
 let draggedTabId = null;
 let draggedFolderId = null;
 
+const dragIndicator = document.createElement('div');
+dragIndicator.className = 'drag-indicator hidden';
+
 function showMenu(menu, x, y, items) {
+  hideMenus();
   menu.innerHTML = '';
   items.forEach(item => {
     const div = document.createElement('div');
@@ -48,6 +52,19 @@ function hideMenus() {
 
 document.addEventListener('click', hideMenus);
 
+function getDragAfterElement(container, y, selector) {
+  const elements = [...container.querySelectorAll(selector)]
+    .filter(el => el !== dragIndicator && el.dataset.id !== draggedTabId && el.dataset.id !== draggedFolderId);
+  return elements.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) {
+      return { offset, element: child };
+    }
+    return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
 function showToast(msg) {
   const toast = document.createElement('div');
   toast.className = 'toast';
@@ -57,23 +74,40 @@ function showToast(msg) {
 }
 
 tabList.addEventListener('dragover', (e) => {
-  if (e.target === tabList) e.preventDefault();
+  e.preventDefault();
+  const selector = draggedFolderId ? '.folder' : '.tab';
+  const afterElement = getDragAfterElement(tabList, e.clientY, selector);
+  dragIndicator.classList.remove('hidden');
+  if (afterElement) {
+    tabList.insertBefore(dragIndicator, afterElement);
+  } else {
+    tabList.appendChild(dragIndicator);
+  }
 });
 tabList.addEventListener('drop', (e) => {
-  if (e.target === tabList) {
-    e.preventDefault();
-    if (draggedTabId) {
-      moveTabToFolder(draggedTabId, null);
-    } else if (draggedFolderId) {
-      const idx = folders.findIndex(f => f.id === draggedFolderId);
-      if (idx !== -1) {
-        const [dragged] = folders.splice(idx, 1);
-        folders.push(dragged);
-        saveTabs();
-        renderTabs();
-      }
-    }
+  e.preventDefault();
+  dragIndicator.classList.add('hidden');
+  dragIndicator.remove();
+  if (draggedTabId) {
+    const afterElement = getDragAfterElement(tabList, e.clientY, '.tab');
+    const draggedIndex = tabs.findIndex(t => t.id === draggedTabId);
+    const [dragged] = tabs.splice(draggedIndex, 1);
+    dragged.folderId = null;
+    let targetIndex = afterElement ? tabs.findIndex(t => t.id === afterElement.dataset.id) : tabs.length;
+    tabs.splice(targetIndex, 0, dragged);
+    saveTabs();
+    renderTabs();
+  } else if (draggedFolderId) {
+    const afterElement = getDragAfterElement(tabList, e.clientY, '.folder');
+    const draggedIndex = folders.findIndex(f => f.id === draggedFolderId);
+    const [dragged] = folders.splice(draggedIndex, 1);
+    let targetIndex = afterElement ? folders.findIndex(f => f.id === afterElement.dataset.id) : folders.length;
+    folders.splice(targetIndex, 0, dragged);
+    saveTabs();
+    renderTabs();
   }
+  draggedTabId = null;
+  draggedFolderId = null;
 });
 
 tabsContainer.addEventListener('contextmenu', (e) => {
@@ -392,9 +426,19 @@ function createFolder(name) {
 }
 
 function moveTabToFolder(tabId, folderId) {
-  const tab = tabs.find(t => t.id === tabId);
-  if (!tab) return;
+  const index = tabs.findIndex(t => t.id === tabId);
+  if (index === -1) return;
+  const [tab] = tabs.splice(index, 1);
   tab.folderId = folderId || null;
+  let targetIndex;
+  if (tab.folderId) {
+    const lastIndex = tabs.map((t, i) => t.folderId === tab.folderId ? i : -1).filter(i => i !== -1).pop();
+    targetIndex = lastIndex !== undefined ? lastIndex + 1 : tabs.length;
+  } else {
+    const lastIndex = tabs.map((t, i) => !t.folderId ? i : -1).filter(i => i !== -1).pop();
+    targetIndex = lastIndex !== undefined ? lastIndex + 1 : tabs.length;
+  }
+  tabs.splice(targetIndex, 0, tab);
   saveTabs();
   renderTabs();
 }
@@ -472,26 +516,14 @@ function createTabElement(tab) {
   tabEl.addEventListener('dragstart', (e) => {
     draggedTabId = tab.id;
     e.dataTransfer.effectAllowed = 'move';
+    tabEl.classList.add('dragging');
   });
 
   tabEl.addEventListener('dragend', () => {
     draggedTabId = null;
-  });
-
-  tabEl.addEventListener('dragover', (e) => {
-    e.preventDefault();
-  });
-
-  tabEl.addEventListener('drop', (e) => {
-    e.preventDefault();
-    if (!draggedTabId || draggedTabId === tab.id) return;
-    const draggedIndex = tabs.findIndex(t => t.id === draggedTabId);
-    const targetIndex = tabs.findIndex(t => t.id === tab.id);
-    const [dragged] = tabs.splice(draggedIndex, 1);
-    dragged.folderId = tab.folderId;
-    tabs.splice(targetIndex, 0, dragged);
-    saveTabs();
-    renderTabs();
+    tabEl.classList.remove('dragging');
+    dragIndicator.classList.add('hidden');
+    dragIndicator.remove();
   });
 
   return tabEl;
@@ -568,38 +600,78 @@ function renderTabs() {
       ]);
     });
 
+    header.addEventListener('dragenter', () => {
+      if (draggedTabId) header.classList.add('drag-over');
+    });
+    header.addEventListener('dragleave', (e) => {
+      if (!header.contains(e.relatedTarget)) header.classList.remove('drag-over');
+    });
+    header.addEventListener('drop', (e) => {
+      e.preventDefault();
+      header.classList.remove('drag-over');
+      if (draggedTabId) {
+        const draggedIndex = tabs.findIndex(t => t.id === draggedTabId);
+        const [dragged] = tabs.splice(draggedIndex, 1);
+        dragged.folderId = folder.id;
+        const lastIndex = tabs.map((t, i) => t.folderId === folder.id ? i : -1).filter(i => i !== -1).pop();
+        const insertIndex = lastIndex !== undefined ? lastIndex + 1 : tabs.length;
+        tabs.splice(insertIndex, 0, dragged);
+        saveTabs();
+        renderTabs();
+        draggedTabId = null;
+      }
+    });
+
     folderEl.appendChild(header);
 
     const container = document.createElement('div');
     container.className = 'folder-tabs';
+    container.dataset.folderId = folder.id;
     tabs.filter(t => t.folderId === folder.id).forEach(tab => {
       container.appendChild(createTabElement(tab));
     });
-    container.addEventListener('dragover', (e) => e.preventDefault());
-    container.addEventListener('drop', (e) => {
+    container.addEventListener('dragover', (e) => {
+      if (!draggedTabId) return;
       e.preventDefault();
-      if (draggedTabId) moveTabToFolder(draggedTabId, folder.id);
-    });
-    folderEl.addEventListener('dragover', (e) => e.preventDefault());
-    folderEl.addEventListener('drop', (e) => {
-      e.preventDefault();
-      if (draggedTabId) {
-        moveTabToFolder(draggedTabId, folder.id);
-      } else if (draggedFolderId && draggedFolderId !== folder.id) {
-        const draggedIndex = folders.findIndex(f => f.id === draggedFolderId);
-        const [dragged] = folders.splice(draggedIndex, 1);
-        const targetIndex = folders.findIndex(f => f.id === folder.id);
-        folders.splice(targetIndex, 0, dragged);
-        saveTabs();
-        renderTabs();
+      const afterElement = getDragAfterElement(container, e.clientY, '.tab');
+      dragIndicator.classList.remove('hidden');
+      if (afterElement) {
+        container.insertBefore(dragIndicator, afterElement);
+      } else {
+        container.appendChild(dragIndicator);
       }
+    });
+    container.addEventListener('drop', (e) => {
+      if (!draggedTabId) return;
+      e.preventDefault();
+      dragIndicator.classList.add('hidden');
+      dragIndicator.remove();
+      const afterElement = getDragAfterElement(container, e.clientY, '.tab');
+      const draggedIndex = tabs.findIndex(t => t.id === draggedTabId);
+      const [dragged] = tabs.splice(draggedIndex, 1);
+      dragged.folderId = folder.id;
+      let targetIndex;
+      if (afterElement) {
+        targetIndex = tabs.findIndex(t => t.id === afterElement.dataset.id);
+      } else {
+        const lastIndex = tabs.map((t, i) => t.folderId === folder.id ? i : -1).filter(i => i !== -1).pop();
+        targetIndex = lastIndex !== undefined ? lastIndex + 1 : tabs.length;
+      }
+      tabs.splice(targetIndex, 0, dragged);
+      saveTabs();
+      renderTabs();
+      draggedTabId = null;
     });
     folderEl.addEventListener('dragstart', (e) => {
       draggedFolderId = folder.id;
       e.dataTransfer.effectAllowed = 'move';
+      folderEl.classList.add('dragging');
     });
     folderEl.addEventListener('dragend', () => {
       draggedFolderId = null;
+      folderEl.classList.remove('dragging');
+      dragIndicator.classList.add('hidden');
+      dragIndicator.remove();
     });
     tabList.appendChild(folderEl);
     folderEl.appendChild(container);
