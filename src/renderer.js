@@ -15,6 +15,29 @@ const fontSelect = document.getElementById('font-select');
 const logsBtn = document.getElementById('logs-btn');
 const logPanel = document.getElementById('log-panel');
 const logOutput = document.getElementById('log-output');
+
+// Restore persisted settings
+const savedGradient = localStorage.getItem('gradient');
+if (savedGradient) {
+  gradientSelect.value = savedGradient;
+  document.body.style.setProperty('--border-gradient', savedGradient);
+  gradientPreview.style.background = savedGradient;
+} else {
+  gradientPreview.style.background = gradientSelect.value;
+}
+
+const savedFont = localStorage.getItem('font');
+if (savedFont) {
+  fontSelect.value = savedFont;
+  document.body.style.setProperty('--app-font', "'" + savedFont + "', sans-serif");
+}
+
+function syncDropdownWidths() {
+  fontSelect.style.width = `${gradientSelect.offsetWidth}px`;
+}
+syncDropdownWidths();
+window.addEventListener('load', syncDropdownWidths);
+window.addEventListener('resize', syncDropdownWidths);
 noteArea.addEventListener('click', async (e) => {
   if (!editor) return;
   if (e.target !== noteArea && e.target !== editorContainer) return;
@@ -289,14 +312,14 @@ closeSettingsBtn.addEventListener('click', toggleSettings);
 gradientSelect.addEventListener('change', (e) => {
   document.body.style.setProperty('--border-gradient', e.target.value);
   gradientPreview.style.background = e.target.value;
+  localStorage.setItem('gradient', e.target.value);
+  syncDropdownWidths();
 });
 
 fontSelect.addEventListener('change', (e) => {
   document.body.style.setProperty('--app-font', "'" + e.target.value + "', sans-serif");
+  localStorage.setItem('font', e.target.value);
 });
-
-// initialize preview with current selection
-gradientPreview.style.background = gradientSelect.value;
 
 const minBtn = document.getElementById('min-btn');
 const maxBtn = document.getElementById('max-btn');
