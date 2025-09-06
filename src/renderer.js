@@ -4,11 +4,119 @@ try {
 } catch {
   localStorage.removeItem('tabs');
 }
+let folders = [];
+try {
+  folders = JSON.parse(localStorage.getItem('folders') || '[]');
+} catch {
+  localStorage.removeItem('folders');
+}
 let currentTab = null;
 
 const tabList = document.getElementById('tab-list');
 const addTabBtn = document.getElementById('add-tab');
 const editorContainer = document.getElementById('editor');
+const tabsContainer = document.getElementById('tabs');
+const tabContextMenu = document.createElement('div');
+tabContextMenu.id = 'tab-context-menu';
+tabContextMenu.className = 'context-menu hidden';
+document.body.appendChild(tabContextMenu);
+const tabBarContextMenu = document.createElement('div');
+tabBarContextMenu.id = 'tabbar-context-menu';
+tabBarContextMenu.className = 'context-menu hidden';
+document.body.appendChild(tabBarContextMenu);
+let draggedTabId = null;
+let draggedFolderId = null;
+
+const dragIndicator = document.createElement('div');
+dragIndicator.className = 'drag-indicator hidden';
+
+function showMenu(menu, x, y, items) {
+  hideMenus();
+  menu.innerHTML = '';
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'context-menu-item';
+    div.textContent = item.label;
+    div.addEventListener('click', () => { hideMenus(); item.action(); });
+    menu.appendChild(div);
+  });
+  menu.style.left = x + 'px';
+  menu.style.top = y + 'px';
+  menu.classList.remove('hidden');
+}
+
+function hideMenus() {
+  tabContextMenu.classList.add('hidden');
+  tabBarContextMenu.classList.add('hidden');
+}
+
+document.addEventListener('click', hideMenus);
+
+function getDragAfterElement(container, y, selector) {
+  const elements = [...container.querySelectorAll(selector)]
+    .filter(el => el !== dragIndicator && el.dataset.id !== draggedTabId && el.dataset.id !== draggedFolderId);
+  return elements.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = y - box.top - box.height / 2;
+    if (offset < 0 && offset > closest.offset) {
+      return { offset, element: child };
+    }
+    return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+tabList.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  const selector = draggedFolderId ? '.folder' : '.tab';
+  const afterElement = getDragAfterElement(tabList, e.clientY, selector);
+  dragIndicator.classList.remove('hidden');
+  if (afterElement) {
+    tabList.insertBefore(dragIndicator, afterElement);
+  } else {
+    tabList.appendChild(dragIndicator);
+  }
+});
+tabList.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dragIndicator.classList.add('hidden');
+  dragIndicator.remove();
+  if (draggedTabId) {
+    const afterElement = getDragAfterElement(tabList, e.clientY, '.tab');
+    const draggedIndex = tabs.findIndex(t => t.id === draggedTabId);
+    const [dragged] = tabs.splice(draggedIndex, 1);
+    dragged.folderId = null;
+    let targetIndex = afterElement ? tabs.findIndex(t => t.id === afterElement.dataset.id) : tabs.length;
+    tabs.splice(targetIndex, 0, dragged);
+    saveTabs();
+    renderTabs();
+  } else if (draggedFolderId) {
+    const afterElement = getDragAfterElement(tabList, e.clientY, '.folder');
+    const draggedIndex = folders.findIndex(f => f.id === draggedFolderId);
+    const [dragged] = folders.splice(draggedIndex, 1);
+    let targetIndex = afterElement ? folders.findIndex(f => f.id === afterElement.dataset.id) : folders.length;
+    folders.splice(targetIndex, 0, dragged);
+    saveTabs();
+    renderTabs();
+  }
+  draggedTabId = null;
+  draggedFolderId = null;
+});
+
+tabsContainer.addEventListener('contextmenu', (e) => {
+  if (e.target.closest('.tab') || e.target.closest('.folder')) return;
+  e.preventDefault();
+  showMenu(tabBarContextMenu, e.pageX, e.pageY, [
+    { label: 'New Folder', action: () => createFolder() }
+  ]);
+});
 const noteArea = document.getElementById('note-area');
 const settingsBtn = document.getElementById('settings-btn');
 const closeSettingsBtn = document.getElementById('close-settings');
@@ -246,6 +354,7 @@ async function initMilkdown() {
 
 function saveTabs() {
   localStorage.setItem('tabs', JSON.stringify(tabs));
+  localStorage.setItem('folders', JSON.stringify(folders));
 }
 
 function renameTab(tabId) {
@@ -276,6 +385,150 @@ function renameTab(tabId) {
   });
 }
 
+function renameFolder(folderId) {
+  const folder = folders.find(f => f.id === folderId);
+  if (!folder) return;
+  const titleSpan = tabList.querySelector(`.folder[data-id="${folderId}"] .folder-title`);
+  if (!titleSpan) return;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'rename-input';
+  input.value = folder.title;
+  titleSpan.replaceWith(input);
+  input.focus();
+  input.select();
+
+  const finish = () => {
+    const newName = input.value.trim();
+    if (newName) folder.title = newName;
+    saveTabs();
+    renderTabs();
+  };
+
+  input.addEventListener('blur', finish);
+  input.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter') finish();
+    if (ev.key === 'Escape') renderTabs();
+  });
+}
+
+function createFolder(name) {
+  if (!name) {
+    let index = 1;
+    const base = 'Folder ';
+    while (folders.some(f => f.title === base + index)) index++;
+    name = base + index;
+  }
+  const id = Date.now().toString() + '-f';
+  folders.push({ id, title: name, collapsed: false });
+  saveTabs();
+  renderTabs();
+}
+
+function moveTabToFolder(tabId, folderId) {
+  const index = tabs.findIndex(t => t.id === tabId);
+  if (index === -1) return;
+  const [tab] = tabs.splice(index, 1);
+  tab.folderId = folderId || null;
+  let targetIndex;
+  if (tab.folderId) {
+    const lastIndex = tabs.map((t, i) => t.folderId === tab.folderId ? i : -1).filter(i => i !== -1).pop();
+    targetIndex = lastIndex !== undefined ? lastIndex + 1 : tabs.length;
+  } else {
+    const lastIndex = tabs.map((t, i) => !t.folderId ? i : -1).filter(i => i !== -1).pop();
+    targetIndex = lastIndex !== undefined ? lastIndex + 1 : tabs.length;
+  }
+  tabs.splice(targetIndex, 0, tab);
+  saveTabs();
+  renderTabs();
+}
+
+function deleteFolder(folderId) {
+  const folder = folders.find(f => f.id === folderId);
+  if (!folder) return;
+  const delNotes = confirm(`Delete all notes in "${folder.title}"? Press OK to delete notes, Cancel to keep notes.`);
+  if (delNotes) {
+    tabs = tabs.filter(t => t.folderId !== folderId);
+  } else {
+    tabs.forEach(t => { if (t.folderId === folderId) t.folderId = null; });
+  }
+  const idx = folders.findIndex(f => f.id === folderId);
+  if (idx !== -1) folders.splice(idx, 1);
+  saveTabs();
+  renderTabs();
+  showToast(delNotes ? `Deleted folder "${folder.title}" and its notes` : `Deleted folder "${folder.title}"`);
+}
+
+function createTabElement(tab) {
+  const tabEl = document.createElement('div');
+  tabEl.className = 'tab';
+  tabEl.dataset.id = tab.id;
+  tabEl.draggable = true;
+  if (tab.id === currentTab?.id) tabEl.classList.add('active');
+
+  const titleSpan = document.createElement('span');
+  titleSpan.className = 'title';
+  titleSpan.textContent = tab.title;
+  titleSpan.title = tab.title;
+  tabEl.title = tab.title;
+
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'close-tab';
+  closeBtn.textContent = '×';
+  closeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeTab(tab.id);
+  });
+
+  tabEl.appendChild(titleSpan);
+  tabEl.appendChild(closeBtn);
+
+  tabEl.addEventListener('click', () => {
+    if (currentTab?.id !== tab.id) switchTab(tab.id);
+  });
+
+  tabEl.addEventListener('dblclick', () => {
+    if (currentTab?.id !== tab.id) switchTab(tab.id);
+    renameTab(tab.id);
+  });
+
+  tabEl.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    const x = e.pageX;
+    const y = e.pageY;
+    const items = [
+      { label: 'Rename', action: () => { hideMenus(); renameTab(tab.id); } },
+      { label: 'Delete', action: () => { hideMenus(); closeTab(tab.id); } }
+    ];
+    if (folders.length > 0) {
+      items.push({
+        label: 'Move to Folder',
+        action: () => {
+          const moveItems = [{ label: 'Root', action: () => { hideMenus(); moveTabToFolder(tab.id, null); } }];
+          folders.forEach(f => moveItems.push({ label: f.title, action: () => { hideMenus(); moveTabToFolder(tab.id, f.id); } }));
+          showMenu(tabContextMenu, x, y, moveItems);
+        }
+      });
+    }
+    showMenu(tabContextMenu, x, y, items);
+  });
+
+  tabEl.addEventListener('dragstart', (e) => {
+    draggedTabId = tab.id;
+    e.dataTransfer.effectAllowed = 'move';
+    tabEl.classList.add('dragging');
+  });
+
+  tabEl.addEventListener('dragend', () => {
+    draggedTabId = null;
+    tabEl.classList.remove('dragging');
+    dragIndicator.classList.add('hidden');
+    dragIndicator.remove();
+  });
+
+  return tabEl;
+}
+
 function createTab(title) {
   if (!title) {
     let index = 1;
@@ -284,7 +537,7 @@ function createTab(title) {
     title = base + index;
   }
   const id = Date.now().toString();
-  const tab = { id, title, content: '' };
+  const tab = { id, title, content: '', folderId: null };
   tabs.push(tab);
   saveTabs();
   renderTabs();
@@ -293,41 +546,136 @@ function createTab(title) {
 
 function renderTabs() {
   tabList.innerHTML = '';
-  tabs.forEach(tab => {
-    const tabEl = document.createElement('div');
-    tabEl.className = 'tab';
-    tabEl.dataset.id = tab.id;
-    if (tab.id === currentTab?.id) tabEl.classList.add('active');
+  folders.forEach(folder => {
+    const folderEl = document.createElement('div');
+    folderEl.className = 'folder';
+    folderEl.dataset.id = folder.id;
+    if (folder.collapsed) folderEl.classList.add('collapsed');
+    folderEl.draggable = true;
 
-    const titleSpan = document.createElement('span');
-    titleSpan.className = 'title';
-    titleSpan.textContent = tab.title;
-    titleSpan.title = tab.title;
-    tabEl.title = tab.title;
+    const header = document.createElement('div');
+    header.className = 'folder-header';
 
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'close-tab';
-    closeBtn.textContent = '×';
-    closeBtn.addEventListener('click', (e) => {
+    const arrow = document.createElement('span');
+    arrow.className = 'folder-arrow';
+    arrow.textContent = folder.collapsed ? '▶' : '▼';
+    header.appendChild(arrow);
+
+    const icon = document.createElement('span');
+    icon.className = 'folder-icon';
+    icon.innerHTML = '<svg viewBox="0 0 24 24"><path d="M10 4H2v16h20V6H12l-2-2z"/></svg>';
+    header.appendChild(icon);
+
+    const title = document.createElement('span');
+    title.className = 'folder-title';
+    title.textContent = folder.title;
+    header.appendChild(title);
+
+    let clickTimer;
+    header.addEventListener('click', () => {
+      if (clickTimer) return;
+      clickTimer = setTimeout(() => {
+        folder.collapsed = !folder.collapsed;
+        saveTabs();
+        renderTabs();
+        clickTimer = null;
+      }, 200);
+    });
+    header.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+      if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+      renameFolder(folder.id);
+    });
+    header.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
       e.stopPropagation();
-      closeTab(tab.id);
+      const x = e.pageX;
+      const y = e.pageY;
+      showMenu(tabContextMenu, x, y, [
+        { label: 'Rename', action: () => { hideMenus(); renameFolder(folder.id); } },
+        { label: 'Delete', action: () => { hideMenus(); deleteFolder(folder.id); } }
+      ]);
     });
 
-    tabEl.appendChild(titleSpan);
-    tabEl.appendChild(closeBtn);
-
-    tabEl.addEventListener('click', () => {
-      if (currentTab?.id !== tab.id) switchTab(tab.id);
+    header.addEventListener('dragenter', () => {
+      if (draggedTabId) header.classList.add('drag-over');
+    });
+    header.addEventListener('dragleave', (e) => {
+      if (!header.contains(e.relatedTarget)) header.classList.remove('drag-over');
+    });
+    header.addEventListener('drop', (e) => {
+      e.preventDefault();
+      header.classList.remove('drag-over');
+      if (draggedTabId) {
+        const draggedIndex = tabs.findIndex(t => t.id === draggedTabId);
+        const [dragged] = tabs.splice(draggedIndex, 1);
+        dragged.folderId = folder.id;
+        const lastIndex = tabs.map((t, i) => t.folderId === folder.id ? i : -1).filter(i => i !== -1).pop();
+        const insertIndex = lastIndex !== undefined ? lastIndex + 1 : tabs.length;
+        tabs.splice(insertIndex, 0, dragged);
+        saveTabs();
+        renderTabs();
+        draggedTabId = null;
+      }
     });
 
-    tabEl.addEventListener('dblclick', () => {
-      if (currentTab?.id !== tab.id) switchTab(tab.id);
-      renameTab(tab.id);
-    });
+    folderEl.appendChild(header);
 
-    tabList.appendChild(tabEl);
+    const container = document.createElement('div');
+    container.className = 'folder-tabs';
+    container.dataset.folderId = folder.id;
+    tabs.filter(t => t.folderId === folder.id).forEach(tab => {
+      container.appendChild(createTabElement(tab));
+    });
+    container.addEventListener('dragover', (e) => {
+      if (!draggedTabId) return;
+      e.preventDefault();
+      const afterElement = getDragAfterElement(container, e.clientY, '.tab');
+      dragIndicator.classList.remove('hidden');
+      if (afterElement) {
+        container.insertBefore(dragIndicator, afterElement);
+      } else {
+        container.appendChild(dragIndicator);
+      }
+    });
+    container.addEventListener('drop', (e) => {
+      if (!draggedTabId) return;
+      e.preventDefault();
+      dragIndicator.classList.add('hidden');
+      dragIndicator.remove();
+      const afterElement = getDragAfterElement(container, e.clientY, '.tab');
+      const draggedIndex = tabs.findIndex(t => t.id === draggedTabId);
+      const [dragged] = tabs.splice(draggedIndex, 1);
+      dragged.folderId = folder.id;
+      let targetIndex;
+      if (afterElement) {
+        targetIndex = tabs.findIndex(t => t.id === afterElement.dataset.id);
+      } else {
+        const lastIndex = tabs.map((t, i) => t.folderId === folder.id ? i : -1).filter(i => i !== -1).pop();
+        targetIndex = lastIndex !== undefined ? lastIndex + 1 : tabs.length;
+      }
+      tabs.splice(targetIndex, 0, dragged);
+      saveTabs();
+      renderTabs();
+      draggedTabId = null;
+    });
+    folderEl.addEventListener('dragstart', (e) => {
+      draggedFolderId = folder.id;
+      e.dataTransfer.effectAllowed = 'move';
+      folderEl.classList.add('dragging');
+    });
+    folderEl.addEventListener('dragend', () => {
+      draggedFolderId = null;
+      folderEl.classList.remove('dragging');
+      dragIndicator.classList.add('hidden');
+      dragIndicator.remove();
+    });
+    tabList.appendChild(folderEl);
+    folderEl.appendChild(container);
   });
-
+  tabs.filter(t => !t.folderId).forEach(tab => {
+    tabList.appendChild(createTabElement(tab));
+  });
 }
 
 function switchTab(id) {
@@ -351,6 +699,23 @@ function closeTab(id) {
 }
 
 addTabBtn.addEventListener('click', () => createTab());
+
+function cycleTabs(dir) {
+  if (!tabs.length) return;
+  let index = tabs.findIndex(t => t.id === currentTab?.id);
+  index = (index + dir + tabs.length) % tabs.length;
+  switchTab(tabs[index].id);
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.key === 't') {
+    e.preventDefault();
+    createTab();
+  } else if (e.ctrlKey && e.key === 'Tab') {
+    e.preventDefault();
+    cycleTabs(e.shiftKey ? -1 : 1);
+  }
+});
 
 function toggleSettings() {
   const nowHidden = settingsView.classList.toggle('hidden');
