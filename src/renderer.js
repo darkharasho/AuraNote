@@ -25,6 +25,7 @@ tabBarContextMenu.id = 'tabbar-context-menu';
 tabBarContextMenu.className = 'context-menu hidden';
 document.body.appendChild(tabBarContextMenu);
 let draggedTabId = null;
+let draggedFolderId = null;
 
 function showMenu(menu, x, y, items) {
   menu.innerHTML = '';
@@ -47,12 +48,31 @@ function hideMenus() {
 
 document.addEventListener('click', hideMenus);
 
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
 tabList.addEventListener('dragover', (e) => {
   if (e.target === tabList) e.preventDefault();
 });
 tabList.addEventListener('drop', (e) => {
-  if (e.target === tabList && draggedTabId) {
-    moveTabToFolder(draggedTabId, null);
+  if (e.target === tabList) {
+    e.preventDefault();
+    if (draggedTabId) {
+      moveTabToFolder(draggedTabId, null);
+    } else if (draggedFolderId) {
+      const idx = folders.findIndex(f => f.id === draggedFolderId);
+      if (idx !== -1) {
+        const [dragged] = folders.splice(idx, 1);
+        folders.push(dragged);
+        saveTabs();
+        renderTabs();
+      }
+    }
   }
 });
 
@@ -331,6 +351,33 @@ function renameTab(tabId) {
   });
 }
 
+function renameFolder(folderId) {
+  const folder = folders.find(f => f.id === folderId);
+  if (!folder) return;
+  const titleSpan = tabList.querySelector(`.folder[data-id="${folderId}"] .folder-title`);
+  if (!titleSpan) return;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'rename-input';
+  input.value = folder.title;
+  titleSpan.replaceWith(input);
+  input.focus();
+  input.select();
+
+  const finish = () => {
+    const newName = input.value.trim();
+    if (newName) folder.title = newName;
+    saveTabs();
+    renderTabs();
+  };
+
+  input.addEventListener('blur', finish);
+  input.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter') finish();
+    if (ev.key === 'Escape') renderTabs();
+  });
+}
+
 function createFolder(name) {
   if (!name) {
     let index = 1;
@@ -350,6 +397,22 @@ function moveTabToFolder(tabId, folderId) {
   tab.folderId = folderId || null;
   saveTabs();
   renderTabs();
+}
+
+function deleteFolder(folderId) {
+  const folder = folders.find(f => f.id === folderId);
+  if (!folder) return;
+  const delNotes = confirm(`Delete all notes in "${folder.title}"? Press OK to delete notes, Cancel to keep notes.`);
+  if (delNotes) {
+    tabs = tabs.filter(t => t.folderId !== folderId);
+  } else {
+    tabs.forEach(t => { if (t.folderId === folderId) t.folderId = null; });
+  }
+  const idx = folders.findIndex(f => f.id === folderId);
+  if (idx !== -1) folders.splice(idx, 1);
+  saveTabs();
+  renderTabs();
+  showToast(delNotes ? `Deleted folder "${folder.title}" and its notes` : `Deleted folder "${folder.title}"`);
 }
 
 function createTabElement(tab) {
@@ -459,6 +522,7 @@ function renderTabs() {
     folderEl.className = 'folder';
     folderEl.dataset.id = folder.id;
     if (folder.collapsed) folderEl.classList.add('collapsed');
+    folderEl.draggable = true;
 
     const header = document.createElement('div');
     header.className = 'folder-header';
@@ -470,7 +534,7 @@ function renderTabs() {
 
     const icon = document.createElement('span');
     icon.className = 'folder-icon';
-    icon.textContent = '📁';
+    icon.innerHTML = '<svg viewBox="0 0 24 24"><path d="M10 4H2v16h20V6H12l-2-2z"/></svg>';
     header.appendChild(icon);
 
     const title = document.createElement('span');
@@ -478,10 +542,29 @@ function renderTabs() {
     title.textContent = folder.title;
     header.appendChild(title);
 
+    let clickTimer;
     header.addEventListener('click', () => {
-      folder.collapsed = !folder.collapsed;
-      saveTabs();
-      renderTabs();
+      if (clickTimer) return;
+      clickTimer = setTimeout(() => {
+        folder.collapsed = !folder.collapsed;
+        saveTabs();
+        renderTabs();
+        clickTimer = null;
+      }, 200);
+    });
+    header.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+      if (clickTimer) { clearTimeout(clickTimer); clickTimer = null; }
+      renameFolder(folder.id);
+    });
+    header.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      const x = e.pageX;
+      const y = e.pageY;
+      showMenu(tabContextMenu, x, y, [
+        { label: 'Rename', action: () => { hideMenus(); renameFolder(folder.id); } },
+        { label: 'Delete', action: () => { hideMenus(); deleteFolder(folder.id); } }
+      ]);
     });
 
     folderEl.appendChild(header);
@@ -499,7 +582,23 @@ function renderTabs() {
     folderEl.addEventListener('dragover', (e) => e.preventDefault());
     folderEl.addEventListener('drop', (e) => {
       e.preventDefault();
-      if (draggedTabId) moveTabToFolder(draggedTabId, folder.id);
+      if (draggedTabId) {
+        moveTabToFolder(draggedTabId, folder.id);
+      } else if (draggedFolderId && draggedFolderId !== folder.id) {
+        const draggedIndex = folders.findIndex(f => f.id === draggedFolderId);
+        const targetIndex = folders.findIndex(f => f.id === folder.id);
+        const [dragged] = folders.splice(draggedIndex, 1);
+        folders.splice(targetIndex, 0, dragged);
+        saveTabs();
+        renderTabs();
+      }
+    });
+    folderEl.addEventListener('dragstart', (e) => {
+      draggedFolderId = folder.id;
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    folderEl.addEventListener('dragend', () => {
+      draggedFolderId = null;
     });
     tabList.appendChild(folderEl);
     folderEl.appendChild(container);
