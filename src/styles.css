@@ -165,32 +165,33 @@ body {
 #main-view {
   flex: 1;
   display: flex;
-  overflow: hidden;
+  overflow: visible;
   background: var(--main-bg);
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
 }
 
 #tabs {
-  width: 150px;
+  width: 170px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   border-bottom-left-radius: 12px;
-  margin: 4px 0 4px 15px;
+  margin: 12px 0 12px 20px;
 }
 
 #tab-list {
   flex: 1;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: visible;
+  padding: 10px;
 }
 
 .tab {
   display: flex;
   align-items: center;
-  padding: 6px 14px 6px 20px;
-  margin: 0 4px 4px 4px;
+  padding: 10px 18px 10px 24px;
+  margin: 0 8px 8px 8px;
   color: var(--text-color);
   cursor: pointer;
   border-radius: 8px;
@@ -209,6 +210,7 @@ body {
   margin-right: 4px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  z-index: 0;
 }
 
  .tab.active::before {
@@ -218,6 +220,7 @@ body {
   padding: 2px;
   border-radius: 8px;
   background: var(--border-gradient);
+  opacity: 0.5;
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -225,6 +228,17 @@ body {
           mask-composite: exclude;
   pointer-events: none;
   z-index: 1;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 10px;
+  background: var(--border-gradient);
+  filter: blur(8px);
+  opacity: 0.5;
+  z-index: -1;
 }
 .tab .title {
   flex: 1;
@@ -285,13 +299,13 @@ body {
 
 #note-area {
   flex: 1;
-  margin: 4px 10px 10px 8px;
+  margin: 12px 16px 16px 12px;
   background: var(--note-bg);
   position: relative;
   color: var(--text-color);
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-  overflow: hidden;
+  overflow: visible;
 }
 
 #note-area::before {
@@ -301,6 +315,7 @@ body {
   padding: 2px;
   border-radius: 12px;
   background: var(--border-gradient);
+  opacity: 0.5;
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -309,9 +324,20 @@ body {
   pointer-events: none;
   z-index: 1;
 }
+
+#note-area::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 14px;
+  background: var(--border-gradient);
+  filter: blur(12px);
+  opacity: 0.5;
+  z-index: -1;
+}
 #editor {
   height: 100%;
-  padding: 10px;
+  padding: 16px;
   font-family: inherit;
   font-size: 14px;
   line-height: 1.4;

@@ -6,10 +6,10 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new MicaBrowserWindow({
-    width: 1000,
-    height: 700,
-    minWidth: 600,
-    minHeight: 400,
+    width: 1040,
+    height: 740,
+    minWidth: 640,
+    minHeight: 440,
     frame: false,
     titleBarStyle: 'hidden',
     show: false,
