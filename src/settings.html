@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>AuraNote Settings</title>
+  <link rel="icon" href="../media/AuraNote.ico" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../node_modules/@milkdown/theme-nord/lib/style.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="theme-dark">
+  <div id="app">
+    <div id="titlebar">
+      <span id="app-title">AuraNote</span>
+      <div id="titlebar-right">
+        <button id="settings-btn" title="Back to main">⚙</button>
+        <div id="window-controls">
+          <button class="window-btn" id="min-btn">−</button>
+          <button class="window-btn" id="max-btn">☐</button>
+          <button class="window-btn" id="close-btn">×</button>
+        </div>
+      </div>
+    </div>
+    <div id="main-view">
+      <div id="tabs">
+        <div class="tab active" data-section="general">General</div>
+        <div class="tab" data-section="appearance">Appearance</div>
+        <div class="tab" data-section="io">Import/Export</div>
+      </div>
+      <div id="note-area">
+        <div id="settings-content">
+          <div id="section-general" class="settings-section active">
+            <div class="setting">
+              <label for="confirm-close-select">Confirm Close:</label>
+              <select id="confirm-close-select">
+                <option value="on">On</option>
+                <option value="off">Off</option>
+              </select>
+            </div>
+          </div>
+          <div id="section-appearance" class="settings-section">
+            <div class="setting">
+              <label for="theme-select">Theme:</label>
+              <select id="theme-select">
+                <option value="dark-mica">Dark Mica</option>
+                <option value="light-mica">Light Mica</option>
+                <option value="acrylic">Acrylic</option>
+              </select>
+            </div>
+            <div class="setting">
+              <label for="gradient-select">Gradient Theme:</label>
+              <div class="gradient-row">
+                <select id="gradient-select">
+                  <option value="linear-gradient(135deg,#ff40ff,#40ffff)">Magenta / Cyan</option>
+                  <option value="linear-gradient(135deg,#ff9e87,#fec79c)">Sunset</option>
+                  <option value="linear-gradient(135deg,#7bc1fe,#40f5fe)">Ocean</option>
+                  <option value="linear-gradient(135deg,#72ef9c,#6afbe1)">Lime</option>
+                  <option value="linear-gradient(135deg,#ffb199,#ffecd2)">Peach</option>
+                  <option value="linear-gradient(135deg,#c7c3fc,#e0c3fc)">Lavender</option>
+                  <option value="linear-gradient(135deg,#a5d6a7,#80cbc4)">Forest</option>
+                  <option value="linear-gradient(135deg,#b3b8ff,#8ca9ff)">Royal</option>
+                  <option value="linear-gradient(135deg,#ff8a65,#ffb38a)">Fire</option>
+                  <option value="linear-gradient(135deg,#d1d9e6,#f0f4f9)">Steel</option>
+                  <option value="linear-gradient(135deg,#f5a3c7,#f8d1e3)">Rose</option>
+                  <option value="linear-gradient(135deg,#b3d9ff,#d6ecff)">Sky</option>
+                  <option value="linear-gradient(135deg,#ffd59b,#ffe9c5)">Mango</option>
+                  <option value="linear-gradient(135deg,#d7b8ff,#e5d2ff)">Lilac</option>
+                  <option value="linear-gradient(135deg,#c4f0d9,#e3f9e9)">Mint</option>
+                  <option value="linear-gradient(135deg,#d0d7e2,#e5eaf1)">Slate</option>
+                  <option value="linear-gradient(135deg,#ff00ff,#00ffff)">Neon</option>
+                  <option value="linear-gradient(135deg,#ffce00,#ff7300)">Citrus</option>
+                  <option value="linear-gradient(135deg,#00ff95,#00bfff)">Tropical</option>
+                  <option value="linear-gradient(135deg,#f000ff,#ff6600)">Fusion</option>
+                  <option value="linear-gradient(135deg,#ff0033,#ff7700)">Ember</option>
+                  <option value="linear-gradient(135deg,#00f260,#0575e6)">Cyber</option>
+                  <option value="linear-gradient(135deg,#ffee00,#00eaff)">Volt</option>
+                  <option value="linear-gradient(135deg,#7f00ff,#e100ff)">Galaxy</option>
+                  <option value="linear-gradient(135deg,#ff616f,#ffb88c)">Coral</option>
+                  <option value="linear-gradient(135deg,#ff512f,#f09819)">Sunrise</option>
+                </select>
+                <div id="gradient-preview" class="gradient-preview"></div>
+              </div>
+            </div>
+            <div class="setting">
+              <label for="gradient-outline-select">Gradient Outline:</label>
+              <select id="gradient-outline-select">
+                <option value="on">On</option>
+                <option value="off">Off</option>
+              </select>
+            </div>
+            <div class="setting">
+              <label for="glow-select">Glow:</label>
+              <select id="glow-select">
+                <option value="on">On</option>
+                <option value="off">Off</option>
+              </select>
+            </div>
+            <div class="setting">
+              <label for="font-select">Font:</label>
+              <select id="font-select">
+                <option value="Poppins" selected>Poppins</option>
+                <option value="Nunito">Nunito</option>
+                <option value="Inter">Inter</option>
+                <option value="Josefin Sans">Josefin Sans</option>
+                <option value="Roboto">Roboto</option>
+                <option value="Open Sans">Open Sans</option>
+                <option value="Rubik">Rubik</option>
+                <option value="DM Sans">DM Sans</option>
+                <option value="Lato">Lato</option>
+                <option value="Ubuntu">Ubuntu</option>
+                <option value="Ranade">Ranade</option>
+                <option value="Source Sans Pro">Source Sans Pro</option>
+                <option value="Work Sans">Work Sans</option>
+                <option value="Manrope">Manrope</option>
+                <option value="Object Sans">Object Sans</option>
+                <option value="Raleway">Raleway</option>
+                <option value="Montserrat">Montserrat</option>
+                <option value="Playfair Display">Playfair Display</option>
+                <option value="Libre Baskerville">Libre Baskerville</option>
+                <option value="Soria">Soria</option>
+                <option value="Neuton">Neuton</option>
+                <option value="Lora">Lora</option>
+                <option value="Sreda">Sreda</option>
+                <option value="Arvo">Arvo</option>
+              </select>
+            </div>
+          </div>
+          <div id="section-io" class="settings-section">
+            <div class="import-export">
+              <div class="import-column">
+                <p>Select a Markdown (.md) file to import as a new tab.</p>
+                <button class="gradient-btn" id="import-btn">Choose File</button>
+              </div>
+              <div class="export-column">
+                <p>Select a tab to export as a Markdown file.</p>
+                <div id="export-list" class="export-list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="settings.js"></script>
+</body>
+</html>

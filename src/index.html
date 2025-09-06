@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>AuraNote</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet" />
+  <link rel="icon" href="../media/AuraNote.ico" type="image/x-icon" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../node_modules/@milkdown/theme-nord/lib/style.css" />
   <link rel="stylesheet" href="styles.css" />
 
@@ -59,10 +60,19 @@
   }
   </script>
 </head>
-<body>
+<body class="theme-dark">
   <div id="app">
     <div id="titlebar">
       <span id="app-title">AuraNote</span>
+      <div id="view-toggle" title="Toggle markdown view">
+        <button id="rendered-view" class="active" title="Rendered view">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </button>
+        <button id="raw-view" title="Raw markdown">#</button>
+      </div>
       <div id="titlebar-right">
         <button id="settings-btn" title="Settings">⚙</button>
         <button id="logs-btn" title="Logs">🛈</button>
@@ -81,50 +91,10 @@
       </div>
       <div id="note-area">
         <div id="editor"></div>
+        <textarea id="raw-editor" class="hidden"></textarea>
       </div>
     </div>
 
-    <div id="settings-view" class="hidden">
-      <h2>Settings</h2>
-      <div class="setting">
-        <label for="gradient-select">Gradient Theme:</label>
-        <select id="gradient-select">
-          <option value="linear-gradient(135deg,#ff00ff,#00ffff)">Magenta / Cyan</option>
-          <option value="linear-gradient(135deg,#ff7e5f,#feb47b)">Sunset</option>
-          <option value="linear-gradient(135deg,#4facfe,#00f2fe)">Ocean</option>
-          <option value="linear-gradient(135deg,#43e97b,#38f9d7)">Lime</option>
-        </select>
-      </div>
-      <div class="setting">
-        <label for="font-select">Font:</label>
-        <select id="font-select">
-          <option value="Nunito" selected>Nunito</option>
-          <option value="Inter">Inter</option>
-          <option value="Josefin Sans">Josefin Sans</option>
-          <option value="Roboto">Roboto</option>
-          <option value="Open Sans">Open Sans</option>
-          <option value="Rubik">Rubik</option>
-          <option value="DM Sans">DM Sans</option>
-          <option value="Lato">Lato</option>
-          <option value="Ubuntu">Ubuntu</option>
-          <option value="Ranade">Ranade</option>
-          <option value="Source Sans Pro">Source Sans Pro</option>
-          <option value="Work Sans">Work Sans</option>
-          <option value="Manrope">Manrope</option>
-          <option value="Object Sans">Object Sans</option>
-          <option value="Raleway">Raleway</option>
-          <option value="Montserrat">Montserrat</option>
-          <option value="Playfair Display">Playfair Display</option>
-          <option value="Libre Baskerville">Libre Baskerville</option>
-          <option value="Soria">Soria</option>
-          <option value="Neuton">Neuton</option>
-          <option value="Lora">Lora</option>
-          <option value="Sreda">Sreda</option>
-          <option value="Arvo">Arvo</option>
-        </select>
-      </div>
-      <button id="back-btn">Back</button>
-    </div>
     <div id="log-panel" class="hidden"><pre id="log-output"></pre></div>
   </div>
 
