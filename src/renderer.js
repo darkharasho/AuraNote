@@ -4,11 +4,65 @@ try {
 } catch {
   localStorage.removeItem('tabs');
 }
+let folders = [];
+try {
+  folders = JSON.parse(localStorage.getItem('folders') || '[]');
+} catch {
+  localStorage.removeItem('folders');
+}
 let currentTab = null;
 
 const tabList = document.getElementById('tab-list');
 const addTabBtn = document.getElementById('add-tab');
 const editorContainer = document.getElementById('editor');
+const tabsContainer = document.getElementById('tabs');
+const tabContextMenu = document.createElement('div');
+tabContextMenu.id = 'tab-context-menu';
+tabContextMenu.className = 'context-menu hidden';
+document.body.appendChild(tabContextMenu);
+const tabBarContextMenu = document.createElement('div');
+tabBarContextMenu.id = 'tabbar-context-menu';
+tabBarContextMenu.className = 'context-menu hidden';
+document.body.appendChild(tabBarContextMenu);
+let draggedTabId = null;
+
+function showMenu(menu, x, y, items) {
+  menu.innerHTML = '';
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'context-menu-item';
+    div.textContent = item.label;
+    div.addEventListener('click', () => { hideMenus(); item.action(); });
+    menu.appendChild(div);
+  });
+  menu.style.left = x + 'px';
+  menu.style.top = y + 'px';
+  menu.classList.remove('hidden');
+}
+
+function hideMenus() {
+  tabContextMenu.classList.add('hidden');
+  tabBarContextMenu.classList.add('hidden');
+}
+
+document.addEventListener('click', hideMenus);
+
+tabList.addEventListener('dragover', (e) => {
+  if (e.target === tabList) e.preventDefault();
+});
+tabList.addEventListener('drop', (e) => {
+  if (e.target === tabList && draggedTabId) {
+    moveTabToFolder(draggedTabId, null);
+  }
+});
+
+tabsContainer.addEventListener('contextmenu', (e) => {
+  if (e.target.closest('.tab')) return;
+  e.preventDefault();
+  showMenu(tabBarContextMenu, e.pageX, e.pageY, [
+    { label: 'New Folder', action: () => { const name = prompt('Folder name:'); if (name) createFolder(name); } }
+  ]);
+});
 const noteArea = document.getElementById('note-area');
 const settingsBtn = document.getElementById('settings-btn');
 const closeSettingsBtn = document.getElementById('close-settings');
@@ -246,6 +300,7 @@ async function initMilkdown() {
 
 function saveTabs() {
   localStorage.setItem('tabs', JSON.stringify(tabs));
+  localStorage.setItem('folders', JSON.stringify(folders));
 }
 
 function renameTab(tabId) {
@@ -276,6 +331,103 @@ function renameTab(tabId) {
   });
 }
 
+function createFolder(name) {
+  if (!name) {
+    let index = 1;
+    const base = 'Folder ';
+    while (folders.some(f => f.title === base + index)) index++;
+    name = base + index;
+  }
+  const id = Date.now().toString() + '-f';
+  folders.push({ id, title: name });
+  saveTabs();
+  renderTabs();
+}
+
+function moveTabToFolder(tabId, folderId) {
+  const tab = tabs.find(t => t.id === tabId);
+  if (!tab) return;
+  tab.folderId = folderId || null;
+  saveTabs();
+  renderTabs();
+}
+
+function createTabElement(tab) {
+  const tabEl = document.createElement('div');
+  tabEl.className = 'tab';
+  tabEl.dataset.id = tab.id;
+  tabEl.draggable = true;
+  if (tab.id === currentTab?.id) tabEl.classList.add('active');
+
+  const titleSpan = document.createElement('span');
+  titleSpan.className = 'title';
+  titleSpan.textContent = tab.title;
+  titleSpan.title = tab.title;
+  tabEl.title = tab.title;
+
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'close-tab';
+  closeBtn.textContent = '×';
+  closeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeTab(tab.id);
+  });
+
+  tabEl.appendChild(titleSpan);
+  tabEl.appendChild(closeBtn);
+
+  tabEl.addEventListener('click', () => {
+    if (currentTab?.id !== tab.id) switchTab(tab.id);
+  });
+
+  tabEl.addEventListener('dblclick', () => {
+    if (currentTab?.id !== tab.id) switchTab(tab.id);
+    renameTab(tab.id);
+  });
+
+  tabEl.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    const x = e.pageX;
+    const y = e.pageY;
+    showMenu(tabContextMenu, x, y, [
+      { label: 'Rename', action: () => { hideMenus(); renameTab(tab.id); } },
+      { label: 'Delete', action: () => { hideMenus(); closeTab(tab.id); } },
+      { label: 'Move to Folder', action: () => {
+          const items = [{ label: 'Root', action: () => { hideMenus(); moveTabToFolder(tab.id, null); } }];
+          folders.forEach(f => items.push({ label: f.title, action: () => { hideMenus(); moveTabToFolder(tab.id, f.id); } }));
+          showMenu(tabContextMenu, x, y, items);
+        } },
+    ]);
+  });
+
+  tabEl.addEventListener('dragstart', (e) => {
+    draggedTabId = tab.id;
+    e.dataTransfer.effectAllowed = 'move';
+  });
+
+  tabEl.addEventListener('dragend', () => {
+    draggedTabId = null;
+  });
+
+  tabEl.addEventListener('dragover', (e) => {
+    e.preventDefault();
+  });
+
+  tabEl.addEventListener('drop', (e) => {
+    e.preventDefault();
+    if (!draggedTabId || draggedTabId === tab.id) return;
+    const draggedIndex = tabs.findIndex(t => t.id === draggedTabId);
+    const targetIndex = tabs.findIndex(t => t.id === tab.id);
+    const [dragged] = tabs.splice(draggedIndex, 1);
+    dragged.folderId = tab.folderId;
+    tabs.splice(targetIndex, 0, dragged);
+    saveTabs();
+    renderTabs();
+  });
+
+  return tabEl;
+}
+
 function createTab(title) {
   if (!title) {
     let index = 1;
@@ -284,7 +436,7 @@ function createTab(title) {
     title = base + index;
   }
   const id = Date.now().toString();
-  const tab = { id, title, content: '' };
+  const tab = { id, title, content: '', folderId: null };
   tabs.push(tab);
   saveTabs();
   renderTabs();
@@ -293,41 +445,37 @@ function createTab(title) {
 
 function renderTabs() {
   tabList.innerHTML = '';
-  tabs.forEach(tab => {
-    const tabEl = document.createElement('div');
-    tabEl.className = 'tab';
-    tabEl.dataset.id = tab.id;
-    if (tab.id === currentTab?.id) tabEl.classList.add('active');
-
-    const titleSpan = document.createElement('span');
-    titleSpan.className = 'title';
-    titleSpan.textContent = tab.title;
-    titleSpan.title = tab.title;
-    tabEl.title = tab.title;
-
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'close-tab';
-    closeBtn.textContent = '×';
-    closeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      closeTab(tab.id);
-    });
-
-    tabEl.appendChild(titleSpan);
-    tabEl.appendChild(closeBtn);
-
-    tabEl.addEventListener('click', () => {
-      if (currentTab?.id !== tab.id) switchTab(tab.id);
-    });
-
-    tabEl.addEventListener('dblclick', () => {
-      if (currentTab?.id !== tab.id) switchTab(tab.id);
-      renameTab(tab.id);
-    });
-
-    tabList.appendChild(tabEl);
+  tabs.filter(t => !t.folderId).forEach(tab => {
+    tabList.appendChild(createTabElement(tab));
   });
+  folders.forEach(folder => {
+    const folderEl = document.createElement('div');
+    folderEl.className = 'folder';
+    folderEl.dataset.id = folder.id;
 
+    const header = document.createElement('div');
+    header.className = 'folder-header';
+    header.textContent = folder.title;
+    folderEl.appendChild(header);
+
+    const container = document.createElement('div');
+    container.className = 'folder-tabs';
+    tabs.filter(t => t.folderId === folder.id).forEach(tab => {
+      container.appendChild(createTabElement(tab));
+    });
+    container.addEventListener('dragover', (e) => e.preventDefault());
+    container.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (draggedTabId) moveTabToFolder(draggedTabId, folder.id);
+    });
+    folderEl.addEventListener('dragover', (e) => e.preventDefault());
+    folderEl.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (draggedTabId) moveTabToFolder(draggedTabId, folder.id);
+    });
+    tabList.appendChild(folderEl);
+    folderEl.appendChild(container);
+  });
 }
 
 function switchTab(id) {
@@ -351,6 +499,23 @@ function closeTab(id) {
 }
 
 addTabBtn.addEventListener('click', () => createTab());
+
+function cycleTabs(dir) {
+  if (!tabs.length) return;
+  let index = tabs.findIndex(t => t.id === currentTab?.id);
+  index = (index + dir + tabs.length) % tabs.length;
+  switchTab(tabs[index].id);
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.key === 't') {
+    e.preventDefault();
+    createTab();
+  } else if (e.ctrlKey && e.key === 'Tab') {
+    e.preventDefault();
+    cycleTabs(e.shiftKey ? -1 : 1);
+  }
+});
 
 function toggleSettings() {
   const nowHidden = settingsView.classList.toggle('hidden');

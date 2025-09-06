@@ -270,6 +270,44 @@ body {
   opacity: 1;
 }
 
+.folder {
+  margin: 0 6px 6px 6px;
+}
+
+.folder-header {
+  padding: 6px 14px 6px 20px;
+  margin: 0 0 4px 0;
+  border-radius: 8px;
+  background: var(--tab-active-bg);
+}
+
+.folder-tabs {
+  margin-left: 10px;
+}
+
+.context-menu {
+  position: absolute;
+  background: var(--note-bg);
+  border: 1px solid var(--tab-active-bg);
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  z-index: 10000;
+}
+
+.context-menu.hidden {
+  display: none;
+}
+
+.context-menu-item {
+  padding: 6px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.context-menu-item:hover {
+  background: var(--tab-hover-bg);
+}
+
 #add-tab {
   border: none;
   background: transparent;
