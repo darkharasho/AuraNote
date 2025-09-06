@@ -34,7 +34,8 @@
     "appId": "com.auranote.app",
     "productName": "AuraNote",
     "directories": {
-      "output": "dist"
+      "output": "dist",
+      "buildResources": "media"
     },
     "files": [
       "**/*"
