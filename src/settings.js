@@ -43,13 +43,17 @@ function applyGradientOutline(enabled, persist = true) {
 }
 
 function applyTheme(theme, persist = true) {
-  document.body.classList.remove('theme-dark', 'theme-light', 'theme-acrylic', 'theme-kurzgesagt');
+  document.body.classList.remove('theme-dark', 'theme-light', 'theme-acrylic', 'theme-kurzgesagt', 'theme-deep-ocean');
   if (theme === 'light-mica') {
     document.body.classList.add('theme-light');
   } else if (theme === 'acrylic') {
     document.body.classList.add('theme-acrylic');
   } else if (theme === 'kurzgesagt') {
     document.body.classList.add('theme-kurzgesagt');
+    document.body.classList.add('theme-dark');
+  } else if (theme === 'deep-ocean') {
+    document.body.classList.add('theme-deep-ocean');
+    document.body.classList.add('theme-dark');
   } else {
     document.body.classList.add('theme-dark');
   }
