@@ -604,11 +604,18 @@ body.theme-light .folder-icon svg {
 #note-area::after {
   content: '';
   position: absolute;
-  inset: -8px;
-  border-radius: 14px;
+  inset: 0;
+  padding: 1px;
+  border-radius: 12px;
   background: var(--border-gradient);
   filter: blur(16px);
   opacity: var(--glow-opacity);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
   z-index: -1;
 }
 #editor {
