@@ -321,6 +321,12 @@ body {
   font-size: 14px;
 }
 
+#settings-view select:focus {
+  outline: none;
+  border-color: #777;
+  box-shadow: none;
+}
+
 #settings-view select option {
   background: #111;
   color: #fff;
