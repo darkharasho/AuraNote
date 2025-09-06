@@ -64,6 +64,15 @@
   <div id="app">
     <div id="titlebar">
       <span id="app-title">AuraNote</span>
+      <div id="view-toggle" title="Toggle markdown view">
+        <button id="rendered-view" class="active" title="Rendered view">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
+        </button>
+        <button id="raw-view" title="Raw markdown">#</button>
+      </div>
       <div id="titlebar-right">
         <button id="settings-btn" title="Settings">⚙</button>
         <button id="logs-btn" title="Logs">🛈</button>
@@ -82,6 +91,7 @@
       </div>
       <div id="note-area">
         <div id="editor"></div>
+        <textarea id="raw-editor" class="hidden"></textarea>
       </div>
     </div>
 
