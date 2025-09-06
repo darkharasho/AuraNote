@@ -17,7 +17,7 @@ function createWindow() {
     show: false,
     transparent: true,
     backgroundColor: '#00000000',
-    icon: path.join(__dirname, 'media', 'AuraNote.ico'),
+    icon: path.join(__dirname, 'media', 'AuraNote.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
@@ -78,6 +78,10 @@ function applyTheme(win, theme) {
       } else {
         win.setAcrylic();
       }
+      break;
+    case 'kurzgesagt':
+      win.setDarkTheme();
+      win.setMicaEffect();
       break;
     case 'dark-mica':
     default:

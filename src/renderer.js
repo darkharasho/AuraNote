@@ -162,11 +162,13 @@ const savedGradientOutline = localStorage.getItem('gradient-outline') || 'on';
 applyGradientOutline(savedGradientOutline === 'on', false);
 
 function applyTheme(theme, persist = true) {
-  document.body.classList.remove('theme-dark', 'theme-light', 'theme-acrylic');
+  document.body.classList.remove('theme-dark', 'theme-light', 'theme-acrylic', 'theme-kurzgesagt');
   if (theme === 'light-mica') {
     document.body.classList.add('theme-light');
   } else if (theme === 'acrylic') {
     document.body.classList.add('theme-acrylic');
+  } else if (theme === 'kurzgesagt') {
+    document.body.classList.add('theme-kurzgesagt');
   } else {
     document.body.classList.add('theme-dark');
   }
