@@ -292,6 +292,10 @@ body {
   -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
+#settings-view.hidden {
+  display: none;
+}
+
 .setting {
   margin-bottom: 20px;
 }
