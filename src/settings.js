@@ -134,7 +134,15 @@ window.addEventListener('storage', e => {
 const minBtn = document.getElementById('min-btn');
 const maxBtn = document.getElementById('max-btn');
 const closeBtn = document.getElementById('close-btn');
+const settingsBtn = document.getElementById('settings-btn');
 
 minBtn.addEventListener('click', () => window.api.windowControl('minimize'));
 maxBtn.addEventListener('click', () => window.api.windowControl('maximize'));
-closeBtn.addEventListener('click', () => window.api.openMain());
+settingsBtn.addEventListener('click', () => window.api.openMain());
+closeBtn.addEventListener('click', () => {
+  if (window.api?.windowControl) {
+    window.api.windowControl('close');
+  } else {
+    window.close();
+  }
+});
