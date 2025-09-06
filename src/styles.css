@@ -4,7 +4,7 @@ html, body {
 }
 
 :root {
-  --border-gradient: linear-gradient(135deg,#ff8ad8,#8ad8ff);
+  --border-gradient: linear-gradient(135deg,#ff40ff,#40ffff);
   --app-font: 'Nunito', sans-serif;
 }
 
