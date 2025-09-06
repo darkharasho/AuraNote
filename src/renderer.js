@@ -339,7 +339,7 @@ function createFolder(name) {
     name = base + index;
   }
   const id = Date.now().toString() + '-f';
-  folders.push({ id, title: name });
+  folders.push({ id, title: name, collapsed: false });
   saveTabs();
   renderTabs();
 }
@@ -452,10 +452,32 @@ function renderTabs() {
     const folderEl = document.createElement('div');
     folderEl.className = 'folder';
     folderEl.dataset.id = folder.id;
+    if (folder.collapsed) folderEl.classList.add('collapsed');
 
     const header = document.createElement('div');
     header.className = 'folder-header';
-    header.textContent = folder.title;
+
+    const arrow = document.createElement('span');
+    arrow.className = 'folder-arrow';
+    arrow.textContent = folder.collapsed ? '▶' : '▼';
+    header.appendChild(arrow);
+
+    const icon = document.createElement('span');
+    icon.className = 'folder-icon';
+    icon.textContent = '📁';
+    header.appendChild(icon);
+
+    const title = document.createElement('span');
+    title.className = 'folder-title';
+    title.textContent = folder.title;
+    header.appendChild(title);
+
+    header.addEventListener('click', () => {
+      folder.collapsed = !folder.collapsed;
+      saveTabs();
+      renderTabs();
+    });
+
     folderEl.appendChild(header);
 
     const container = document.createElement('div');
