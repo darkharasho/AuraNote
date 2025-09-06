@@ -8,7 +8,7 @@ const noteArea = document.getElementById('note-area');
 const settingsBtn = document.getElementById('settings-btn');
 const backBtn = document.getElementById('back-btn');
 const settingsView = document.getElementById('settings-view');
-const mainView = document.getElementById('main-view');
+settingsView.classList.add('hidden');
 const gradientSelect = document.getElementById('gradient-select');
 const fontSelect = document.getElementById('font-select');
 const logsBtn = document.getElementById('logs-btn');
@@ -279,14 +279,7 @@ function closeTab(id) {
 addTabBtn.addEventListener('click', () => createTab());
 
 function toggleSettings() {
-  const isOpen = !settingsView.classList.contains('hidden');
-  if (isOpen) {
-    settingsView.classList.add('hidden');
-    mainView.classList.remove('hidden');
-  } else {
-    mainView.classList.add('hidden');
-    settingsView.classList.remove('hidden');
-  }
+  settingsView.classList.toggle('hidden');
 }
 
 settingsBtn.addEventListener('click', toggleSettings);
