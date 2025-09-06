@@ -316,23 +316,13 @@ function renderTabs() {
     tabEl.appendChild(titleSpan);
     tabEl.appendChild(closeBtn);
 
-    let clickTimer = null;
     tabEl.addEventListener('click', () => {
-      if (clickTimer) {
-        clearTimeout(clickTimer);
-        clickTimer = null;
-        if (currentTab?.id !== tab.id) {
-          switchTab(tab.id);
-          setTimeout(() => renameTab(tab.id), 0);
-        } else {
-          renameTab(tab.id);
-        }
-      } else {
-        clickTimer = setTimeout(() => {
-          if (currentTab?.id !== tab.id) switchTab(tab.id);
-          clickTimer = null;
-        }, 200);
-      }
+      if (currentTab?.id !== tab.id) switchTab(tab.id);
+    });
+
+    tabEl.addEventListener('dblclick', () => {
+      if (currentTab?.id !== tab.id) switchTab(tab.id);
+      renameTab(tab.id);
     });
 
     tabList.appendChild(tabEl);

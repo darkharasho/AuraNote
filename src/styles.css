@@ -174,33 +174,33 @@ body {
 }
 
 #tabs {
-  width: 170px;
+  width: 200px;
   display: flex;
   flex-direction: column;
   overflow: visible;
   border-bottom-left-radius: 12px;
-  margin: 12px 0 12px 5px;
+  margin: 8px 0 8px 5px;
 }
 
 #tab-list {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 10px 10px 10px 0px;
+  padding: 6px 6px 6px 0;
 }
 
 .tab {
   display: flex;
   align-items: center;
-  padding: 10px 18px 10px 24px;
-  margin: 0 8px 8px 8px;
+  padding: 6px 14px 6px 20px;
+  margin: 0 6px 6px 6px;
   color: var(--text-color);
   cursor: pointer;
   border-radius: 8px;
   transition: background 0.2s, box-shadow 0.2s;
   position: relative;
   background: transparent;
-  gap: 8px;
+  gap: 6px;
 }
 
 .tab:hover {
@@ -247,6 +247,8 @@ body {
   border-radius: 4px;
   box-sizing: border-box;
   outline: none;
+  width: 100%;
+  min-width: 0;
 }
 
 .tab .close-tab {
@@ -272,7 +274,7 @@ body {
   border: none;
   background: transparent;
   color: var(--text-color);
-  padding: 6px 14px 6px 20px;
+  padding: 4px 10px 4px 14px;
   cursor: pointer;
   border-radius: 8px;
   transition: background 0.2s;
