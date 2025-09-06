@@ -78,24 +78,30 @@ body.theme-acrylic {
 
 body.theme-kurzgesagt {
   --text-color: #fff;
-  --titlebar-bg: rgba(20,24,46,0.9);
-  --main-bg: rgba(32,35,67,0.9);
+  --titlebar-bg: linear-gradient(90deg, rgba(14,18,40,0.95), rgba(34,39,85,0.95));
+  --main-bg:
+    radial-gradient(#fff 1px, transparent 1px) 0 0/40px 40px,
+    radial-gradient(#fff 1px, transparent 1px) 20px 20px/40px 40px,
+    radial-gradient(circle at 25% 30%, rgba(61,169,252,0.15), transparent 70%),
+    radial-gradient(circle at 75% 70%, rgba(255,46,205,0.15), transparent 70%),
+    #0d1b2a;
   --tab-hover-bg: rgba(255,255,255,0.1);
-  --tab-active-bg: #3da9fc;
+  --tab-active-bg: linear-gradient(135deg,#ff2ec7,#00d9ff);
   --rename-bg: rgba(0,0,0,0.5);
   --add-tab-hover-bg: rgba(255,255,255,0.1);
   --add-tab-active-bg: rgba(255,255,255,0.2);
-  --note-bg: #23294f;
-  --settings-bg: rgba(32,35,67,0.85);
+  --note-bg: linear-gradient(135deg, rgba(35,41,79,0.85), rgba(23,27,61,0.85));
+  --settings-bg: rgba(23,27,61,0.85);
   --select-bg: #23294f;
   --select-text: #fff;
-  --select-border: #3da9fc;
+  --select-border: #ffdf40;
   --select-option-bg: #23294f;
-  --btn-hover-bg: rgba(61,169,252,0.3);
-  --scrollbar-thumb: rgba(61,169,252,0.5);
-  --scrollbar-thumb-hover: rgba(61,169,252,0.7);
-  --log-bg: rgba(12,15,30,0.9);
+  --btn-hover-bg: rgba(255,223,64,0.25);
+  --scrollbar-thumb: rgba(255,46,205,0.5);
+  --scrollbar-thumb-hover: rgba(0,217,255,0.7);
+  --log-bg: rgba(6,8,18,0.9);
   --editor-pre-bg: rgba(0,0,0,0.4);
+  --border-gradient: linear-gradient(135deg,#ff2ec7,#00d9ff,#ffdf40);
 }
 
 body {
