@@ -33,7 +33,10 @@ if (savedFont) {
 }
 
 function syncDropdownWidths() {
-  fontSelect.style.width = `${gradientSelect.offsetWidth}px`;
+  const width = gradientSelect.offsetWidth;
+  if (width) {
+    fontSelect.style.width = `${width}px`;
+  }
 }
 syncDropdownWidths();
 window.addEventListener('load', syncDropdownWidths);
@@ -303,7 +306,10 @@ function closeTab(id) {
 addTabBtn.addEventListener('click', () => createTab());
 
 function toggleSettings() {
-  settingsView.classList.toggle('hidden');
+  const nowHidden = settingsView.classList.toggle('hidden');
+  if (!nowHidden) {
+    syncDropdownWidths();
+  }
 }
 
 settingsBtn.addEventListener('click', toggleSettings);
