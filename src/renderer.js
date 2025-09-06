@@ -6,10 +6,11 @@ const addTabBtn = document.getElementById('add-tab');
 const editorContainer = document.getElementById('editor');
 const noteArea = document.getElementById('note-area');
 const settingsBtn = document.getElementById('settings-btn');
-const backBtn = document.getElementById('back-btn');
+const closeSettingsBtn = document.getElementById('close-settings');
 const settingsView = document.getElementById('settings-view');
 settingsView.classList.add('hidden');
 const gradientSelect = document.getElementById('gradient-select');
+const gradientPreview = document.getElementById('gradient-preview');
 const fontSelect = document.getElementById('font-select');
 const logsBtn = document.getElementById('logs-btn');
 const logPanel = document.getElementById('log-panel');
@@ -283,15 +284,19 @@ function toggleSettings() {
 }
 
 settingsBtn.addEventListener('click', toggleSettings);
-backBtn.addEventListener('click', toggleSettings);
+closeSettingsBtn.addEventListener('click', toggleSettings);
 
 gradientSelect.addEventListener('change', (e) => {
   document.body.style.setProperty('--border-gradient', e.target.value);
+  gradientPreview.style.background = e.target.value;
 });
 
 fontSelect.addEventListener('change', (e) => {
   document.body.style.setProperty('--app-font', "'" + e.target.value + "', sans-serif");
 });
+
+// initialize preview with current selection
+gradientPreview.style.background = gradientSelect.value;
 
 const minBtn = document.getElementById('min-btn');
 const maxBtn = document.getElementById('max-btn');

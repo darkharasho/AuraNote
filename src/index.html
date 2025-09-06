@@ -86,21 +86,25 @@
     </div>
 
     <div id="settings-view" class="hidden">
+      <button id="close-settings" title="Close settings">×</button>
       <h2>Settings</h2>
       <div class="setting">
         <label for="gradient-select">Gradient Theme:</label>
-        <select id="gradient-select">
-          <option value="linear-gradient(135deg,#ff40ff,#40ffff)">Magenta / Cyan</option>
-          <option value="linear-gradient(135deg,#ff9e87,#fec79c)">Sunset</option>
-          <option value="linear-gradient(135deg,#7bc1fe,#40f5fe)">Ocean</option>
-          <option value="linear-gradient(135deg,#72ef9c,#6afbe1)">Lime</option>
-          <option value="linear-gradient(135deg,#ffb199,#ffecd2)">Peach</option>
-          <option value="linear-gradient(135deg,#c7c3fc,#e0c3fc)">Lavender</option>
-          <option value="linear-gradient(135deg,#a5d6a7,#80cbc4)">Forest</option>
-          <option value="linear-gradient(135deg,#b3b8ff,#8ca9ff)">Royal</option>
-          <option value="linear-gradient(135deg,#ff8a65,#ffb38a)">Fire</option>
-          <option value="linear-gradient(135deg,#d1d9e6,#f0f4f9)">Steel</option>
-        </select>
+        <div class="gradient-row">
+          <select id="gradient-select">
+            <option value="linear-gradient(135deg,#ff40ff,#40ffff)">Magenta / Cyan</option>
+            <option value="linear-gradient(135deg,#ff9e87,#fec79c)">Sunset</option>
+            <option value="linear-gradient(135deg,#7bc1fe,#40f5fe)">Ocean</option>
+            <option value="linear-gradient(135deg,#72ef9c,#6afbe1)">Lime</option>
+            <option value="linear-gradient(135deg,#ffb199,#ffecd2)">Peach</option>
+            <option value="linear-gradient(135deg,#c7c3fc,#e0c3fc)">Lavender</option>
+            <option value="linear-gradient(135deg,#a5d6a7,#80cbc4)">Forest</option>
+            <option value="linear-gradient(135deg,#b3b8ff,#8ca9ff)">Royal</option>
+            <option value="linear-gradient(135deg,#ff8a65,#ffb38a)">Fire</option>
+            <option value="linear-gradient(135deg,#d1d9e6,#f0f4f9)">Steel</option>
+          </select>
+          <div id="gradient-preview" class="gradient-preview"></div>
+        </div>
       </div>
       <div class="setting">
         <label for="font-select">Font:</label>
@@ -131,7 +135,6 @@
           <option value="Arvo">Arvo</option>
         </select>
       </div>
-      <button id="back-btn">Back</button>
     </div>
     <div id="log-panel" class="hidden"><pre id="log-output"></pre></div>
   </div>
