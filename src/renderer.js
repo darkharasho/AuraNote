@@ -1,4 +1,9 @@
-let tabs = JSON.parse(localStorage.getItem('tabs') || '[]');
+let tabs = [];
+try {
+  tabs = JSON.parse(localStorage.getItem('tabs') || '[]');
+} catch {
+  localStorage.removeItem('tabs');
+}
 let currentTab = null;
 
 const tabList = document.getElementById('tab-list');
