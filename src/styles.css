@@ -220,7 +220,7 @@ body {
   padding: 2px;
   border-radius: 8px;
   background: var(--border-gradient);
-  opacity: 0.5;
+  opacity: 0.35;
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -237,8 +237,8 @@ body {
   padding: 6px;
   border-radius: 14px;
   background: var(--border-gradient);
-  filter: blur(8px);
-  opacity: 0.5;
+  filter: blur(6px);
+  opacity: 0.3;
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
