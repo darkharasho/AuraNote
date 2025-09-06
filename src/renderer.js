@@ -546,9 +546,6 @@ function createTab(title) {
 
 function renderTabs() {
   tabList.innerHTML = '';
-  tabs.filter(t => !t.folderId).forEach(tab => {
-    tabList.appendChild(createTabElement(tab));
-  });
   folders.forEach(folder => {
     const folderEl = document.createElement('div');
     folderEl.className = 'folder';
@@ -675,6 +672,9 @@ function renderTabs() {
     });
     tabList.appendChild(folderEl);
     folderEl.appendChild(container);
+  });
+  tabs.filter(t => !t.folderId).forEach(tab => {
+    tabList.appendChild(createTabElement(tab));
   });
 }
 
