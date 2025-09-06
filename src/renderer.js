@@ -77,7 +77,7 @@ tabList.addEventListener('drop', (e) => {
 });
 
 tabsContainer.addEventListener('contextmenu', (e) => {
-  if (e.target.closest('.tab')) return;
+  if (e.target.closest('.tab') || e.target.closest('.folder')) return;
   e.preventDefault();
   showMenu(tabBarContextMenu, e.pageX, e.pageY, [
     { label: 'New Folder', action: () => createFolder() }
@@ -559,6 +559,7 @@ function renderTabs() {
     });
     header.addEventListener('contextmenu', (e) => {
       e.preventDefault();
+      e.stopPropagation();
       const x = e.pageX;
       const y = e.pageY;
       showMenu(tabContextMenu, x, y, [
@@ -586,8 +587,8 @@ function renderTabs() {
         moveTabToFolder(draggedTabId, folder.id);
       } else if (draggedFolderId && draggedFolderId !== folder.id) {
         const draggedIndex = folders.findIndex(f => f.id === draggedFolderId);
-        const targetIndex = folders.findIndex(f => f.id === folder.id);
         const [dragged] = folders.splice(draggedIndex, 1);
+        const targetIndex = folders.findIndex(f => f.id === folder.id);
         folders.splice(targetIndex, 0, dragged);
         saveTabs();
         renderTabs();
