@@ -60,7 +60,7 @@ tabsContainer.addEventListener('contextmenu', (e) => {
   if (e.target.closest('.tab')) return;
   e.preventDefault();
   showMenu(tabBarContextMenu, e.pageX, e.pageY, [
-    { label: 'New Folder', action: () => { const name = prompt('Folder name:'); if (name) createFolder(name); } }
+    { label: 'New Folder', action: () => createFolder() }
   ]);
 });
 const noteArea = document.getElementById('note-area');
@@ -389,15 +389,21 @@ function createTabElement(tab) {
     e.preventDefault();
     const x = e.pageX;
     const y = e.pageY;
-    showMenu(tabContextMenu, x, y, [
+    const items = [
       { label: 'Rename', action: () => { hideMenus(); renameTab(tab.id); } },
-      { label: 'Delete', action: () => { hideMenus(); closeTab(tab.id); } },
-      { label: 'Move to Folder', action: () => {
-          const items = [{ label: 'Root', action: () => { hideMenus(); moveTabToFolder(tab.id, null); } }];
-          folders.forEach(f => items.push({ label: f.title, action: () => { hideMenus(); moveTabToFolder(tab.id, f.id); } }));
-          showMenu(tabContextMenu, x, y, items);
-        } },
-    ]);
+      { label: 'Delete', action: () => { hideMenus(); closeTab(tab.id); } }
+    ];
+    if (folders.length > 0) {
+      items.push({
+        label: 'Move to Folder',
+        action: () => {
+          const moveItems = [{ label: 'Root', action: () => { hideMenus(); moveTabToFolder(tab.id, null); } }];
+          folders.forEach(f => moveItems.push({ label: f.title, action: () => { hideMenus(); moveTabToFolder(tab.id, f.id); } }));
+          showMenu(tabContextMenu, x, y, moveItems);
+        }
+      });
+    }
+    showMenu(tabContextMenu, x, y, items);
   });
 
   tabEl.addEventListener('dragstart', (e) => {
