@@ -197,8 +197,6 @@ body.theme-deep-ocean {
   --titlebar-bg: linear-gradient(90deg, rgba(0,19,43,0.95), rgba(0,44,68,0.95));
   --main-bg:
     radial-gradient(circle at 50% -20%, rgba(255,255,255,0.15) 0%, transparent 70%),
-    repeating-radial-gradient(circle at 20% 80%, rgba(0,245,212,0.15) 0 2px, transparent 2px 8px),
-    repeating-radial-gradient(circle at 80% 60%, rgba(0,245,212,0.1) 0 1.5px, transparent 1.5px 6px),
     linear-gradient(180deg,#001119 0%,#002a4a 100%);
   --tab-hover-bg: rgba(255,255,255,0.1);
   --tab-active-bg: linear-gradient(135deg,#00b4d8,#0077be);
@@ -226,24 +224,10 @@ body.theme-deep-ocean #main-view::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath fill='%2300467d' d='M0 100h100v-15l-10-2-10 3-20-5-20 6-20-4-20 12z'/%3E%3Cpath fill='%2300579a' d='M0 82l20 4 20-6 20 5 20-3 20 1v-15l-20-4-20 5-20-6-20 5-20-3z'/%3E%3Cpath fill='%230068b0' d='M0 64l20 3 20-5 20 6 20-4 20 2v-13l-20-4-20 5-20-6-20 5-20-3z'/%3E%3Cpath fill='%230079c6' d='M0 47l20 3 20-5 20 6 20-4 20 2V33H0z'/%3E%3Cpath fill='%23008bd9' d='M0 33h100V0H0z'/%3E%3C/svg%3E") no-repeat bottom/cover;
-  pointer-events: none;
-  z-index: 0;
-}
-
-body.theme-deep-ocean #main-view::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle 4px at 20% 80%, rgba(255,255,255,0.4) 40%, transparent 41%),
-    radial-gradient(circle 3px at 40% 90%, rgba(255,255,255,0.35) 40%, transparent 41%),
-    radial-gradient(circle 5px at 60% 85%, rgba(255,255,255,0.45) 40%, transparent 41%),
-    radial-gradient(circle 2px at 80% 90%, rgba(255,255,255,0.3) 40%, transparent 41%);
-  background-size: 200px 200px, 250px 250px, 180px 180px, 220px 220px;
-  background-repeat: repeat;
-  animation: riseBubbles 15s linear infinite;
-  opacity: 0.4;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800' preserveAspectRatio='none'%3E%3Cpath fill='%23003552' d='M0 800h1200v-90c-200-40-400-40-600 0s-400 40-600 0z'/%3E%3Cpath fill='%23005f73' d='M0 710c200 40 400-40 600 0s400 40 600 0v-110c-200-40-400-40-600 0s-400 40-600 0z'/%3E%3Cpath fill='%23008c9e' d='M0 600c200 40 400-40 600 0s400 40 600 0v-130c-200-40-400-40-600 0s-400 40-600 0z'/%3E%3Cpath fill='%2300b4d8' d='M0 470c200 40 400-40 600 0s400 40 600 0V0H0z'/%3E%3C/svg%3E") repeat-x;
+  background-size: 200% 100%;
+  background-position: 0 100%;
+  animation: driftWaves 40s linear infinite;
   pointer-events: none;
   z-index: 0;
 }
@@ -694,9 +678,9 @@ body.theme-light .folder-icon svg {
   }
 }
 
-@keyframes riseBubbles {
-  from { transform: translateY(100%); }
-  to { transform: translateY(-100%); }
+@keyframes driftWaves {
+  from { background-position: 0 100%; }
+  to { background-position: -100% 100%; }
 }
 
 #editor * {
