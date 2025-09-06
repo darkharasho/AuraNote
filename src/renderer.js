@@ -6,14 +6,50 @@ const addTabBtn = document.getElementById('add-tab');
 const editorContainer = document.getElementById('editor');
 const noteArea = document.getElementById('note-area');
 const settingsBtn = document.getElementById('settings-btn');
-const backBtn = document.getElementById('back-btn');
+const closeSettingsBtn = document.getElementById('close-settings');
 const settingsView = document.getElementById('settings-view');
-const mainView = document.getElementById('main-view');
+settingsView.classList.add('hidden');
 const gradientSelect = document.getElementById('gradient-select');
+const gradientPreview = document.getElementById('gradient-preview');
 const fontSelect = document.getElementById('font-select');
 const logsBtn = document.getElementById('logs-btn');
 const logPanel = document.getElementById('log-panel');
 const logOutput = document.getElementById('log-output');
+
+// Restore persisted settings
+const savedGradient = localStorage.getItem('gradient');
+if (savedGradient) {
+  gradientSelect.value = savedGradient;
+  document.body.style.setProperty('--border-gradient', savedGradient);
+  gradientPreview.style.background = savedGradient;
+} else {
+  gradientPreview.style.background = gradientSelect.value;
+}
+
+const savedFont = localStorage.getItem('font');
+if (savedFont) {
+  fontSelect.value = savedFont;
+  document.body.style.setProperty('--app-font', "'" + savedFont + "', sans-serif");
+}
+
+function syncDropdownWidths() {
+  const width = gradientSelect.offsetWidth;
+  if (width) {
+    fontSelect.style.width = `${width}px`;
+  }
+}
+syncDropdownWidths();
+window.addEventListener('load', syncDropdownWidths);
+window.addEventListener('resize', syncDropdownWidths);
+noteArea.addEventListener('click', async (e) => {
+  if (!editor) return;
+  if (e.target !== noteArea && e.target !== editorContainer) return;
+  const { TextSelection } = await import('@milkdown/prose/state');
+  const view = editor.view;
+  const end = view.state.doc.content.size;
+  view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, end)));
+  view.focus();
+});
 
 const isDev = process.env.NODE_ENV !== 'production';
 if (isDev) {
@@ -245,8 +281,6 @@ function renderTabs() {
     tabList.appendChild(tabEl);
   });
 
-  const firstActive = tabs[0]?.id === currentTab?.id;
-  noteArea.classList.toggle('attached', firstActive);
 }
 
 function switchTab(id) {
@@ -271,22 +305,26 @@ function closeTab(id) {
 
 addTabBtn.addEventListener('click', () => createTab());
 
-settingsBtn.addEventListener('click', () => {
-  mainView.classList.add('hidden');
-  settingsView.classList.remove('hidden');
-});
+function toggleSettings() {
+  const nowHidden = settingsView.classList.toggle('hidden');
+  if (!nowHidden) {
+    syncDropdownWidths();
+  }
+}
 
-backBtn.addEventListener('click', () => {
-  settingsView.classList.add('hidden');
-  mainView.classList.remove('hidden');
-});
+settingsBtn.addEventListener('click', toggleSettings);
+closeSettingsBtn.addEventListener('click', toggleSettings);
 
 gradientSelect.addEventListener('change', (e) => {
   document.body.style.setProperty('--border-gradient', e.target.value);
+  gradientPreview.style.background = e.target.value;
+  localStorage.setItem('gradient', e.target.value);
+  syncDropdownWidths();
 });
 
 fontSelect.addEventListener('change', (e) => {
   document.body.style.setProperty('--app-font', "'" + e.target.value + "', sans-serif");
+  localStorage.setItem('font', e.target.value);
 });
 
 const minBtn = document.getElementById('min-btn');

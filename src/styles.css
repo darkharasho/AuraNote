@@ -4,8 +4,8 @@ html, body {
 }
 
 :root {
-  --border-gradient: linear-gradient(135deg,#ff00ff,#00ffff);
-  --app-font: 'Nunito', sans-serif;
+  --border-gradient: linear-gradient(135deg,#ff40ff,#40ffff);
+  --app-font: 'Poppins', sans-serif;
 }
 
 body {
@@ -22,22 +22,6 @@ body {
   border-radius: 12px;
   overflow: hidden;
   background: transparent;
-}
-
-#app::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  padding: 2px;
-  border-radius: 12px;
-  background: var(--border-gradient);
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
-  pointer-events: none;
-  z-index: 1000;
 }
 
 #app > * {
@@ -153,24 +137,26 @@ body {
   background: rgba(255,255,255,0.07);
 }
 
-.tab.active {
+ .tab.active {
   background: #303030;
-  margin-right: 0;
-  border-radius: 8px 0 0 8px;
+  margin-right: 4px;
+  border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 
-.tab.active::after {
+ .tab.active::before {
   content: '';
   position: absolute;
-  top: 0;
-  right: -12px;
-  width: 12px;
-  height: 100%;
-  background: #303030;
-  border-top-right-radius: 12px;
-  border-bottom-right-radius: 12px;
-  z-index: 1;
+  inset: 0;
+  padding: 2px;
+  border-radius: 8px;
+  background: var(--border-gradient);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
 }
 
 .tab .title {
@@ -188,6 +174,8 @@ body {
   padding: 2px 4px;
   font-size: inherit;
   border-radius: 4px;
+  box-sizing: border-box;
+  outline: none;
 }
 
 .tab .close-tab {
@@ -230,18 +218,31 @@ body {
 
 #note-area {
   flex: 1;
-  margin: 4px 10px 10px 0;
+  margin: 4px 10px 10px 8px;
   background: #303030;
   position: relative;
   color: #fff;
   border-radius: 12px;
-  box-shadow: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
   overflow: hidden;
 }
 
-#note-area.attached {
-  border-top-left-radius: 0;
+#note-area::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: 12px;
+  background: var(--border-gradient);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
 }
+
 
 #editor {
   height: 100%;
@@ -275,21 +276,86 @@ body {
 }
 
 #settings-view {
-  flex: 1;
-  padding: 20px;
+  position: absolute;
+  top: 32px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 30px;
   color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow: auto;
+  z-index: 1000;
+  background: rgba(20,20,20,0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+#settings-view.hidden {
+  display: none;
 }
 
 .setting {
-  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-select {
-  padding: 5px;
+#settings-view h2 {
+  font-size: 24px;
+  margin: 0;
 }
 
-#back-btn {
-  padding: 5px 10px;
+.setting label {
+  font-size: 14px;
+}
+
+#settings-view select {
+  padding: 8px;
+  background: #111;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+#settings-view select:focus {
+  outline: none;
+  border-color: #777;
+  box-shadow: none;
+}
+
+#settings-view select option {
+  background: #111;
+  color: #fff;
+}
+
+
+#close-settings {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.gradient-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gradient-preview {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #555;
+  border-radius: 4px;
 }
 
 /* Minimal dark scrollbars */
