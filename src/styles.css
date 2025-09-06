@@ -174,7 +174,7 @@ body {
 }
 
 #tabs {
-  width: 150px;
+  width: 200px;
   display: flex;
   flex-direction: column;
   overflow: visible;
