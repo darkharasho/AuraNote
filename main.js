@@ -18,8 +18,8 @@ function createWindow() {
     icon: path.join(__dirname, 'media', 'AuraNote.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: true,
-      contextIsolation: false
+      nodeIntegration: false,
+      contextIsolation: true
     }
   });
 

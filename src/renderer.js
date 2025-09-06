@@ -47,7 +47,9 @@ function applyTheme(theme, persist = true) {
   } else {
     document.body.classList.add('theme-dark');
   }
-  window.api.setTheme(theme);
+  if (window.api?.setTheme) {
+    window.api.setTheme(theme);
+  }
   if (persist) {
     localStorage.setItem('theme', theme);
   }
@@ -77,7 +79,7 @@ noteArea.addEventListener('click', async (e) => {
   view.focus();
 });
 
-const isDev = process.env.NODE_ENV !== 'production';
+const isDev = typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production';
 if (isDev) {
   function formatLogArg(a) {
     if (a instanceof Error) {
@@ -361,8 +363,8 @@ const minBtn = document.getElementById('min-btn');
 const maxBtn = document.getElementById('max-btn');
 const closeBtn = document.getElementById('close-btn');
 
-minBtn.addEventListener('click', () => window.api.windowControl('minimize'));
-maxBtn.addEventListener('click', () => window.api.windowControl('maximize'));
+minBtn.addEventListener('click', () => window.api?.windowControl('minimize'));
+maxBtn.addEventListener('click', () => window.api?.windowControl('maximize'));
 closeBtn.addEventListener('click', () => {
   if (window.api?.windowControl) {
     window.api.windowControl('close');
