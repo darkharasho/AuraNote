@@ -60,3 +60,25 @@ ipcMain.handle('window-control', (event, action) => {
       break;
   }
 });
+
+ipcMain.handle('set-theme', (event, theme) => {
+  switch (theme) {
+    case 'light-mica':
+      mainWindow.setLightTheme();
+      mainWindow.setMicaEffect();
+      break;
+    case 'acrylic':
+      mainWindow.setDarkTheme();
+      if (mainWindow.setMicaAcrylicEffect) {
+        mainWindow.setMicaAcrylicEffect();
+      } else {
+        mainWindow.setAcrylic();
+      }
+      break;
+    case 'dark-mica':
+    default:
+      mainWindow.setDarkTheme();
+      mainWindow.setMicaEffect();
+      break;
+  }
+});

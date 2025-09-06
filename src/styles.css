@@ -8,10 +8,77 @@ html, body {
   --app-font: 'Poppins', sans-serif;
 }
 
+body.theme-dark {
+  --text-color: #fff;
+  --titlebar-bg: rgba(0,0,0,0.2);
+  --main-bg: rgba(0,0,0,0.2);
+  --tab-hover-bg: rgba(255,255,255,0.07);
+  --tab-active-bg: #303030;
+  --rename-bg: rgba(0,0,0,0.4);
+  --add-tab-hover-bg: rgba(255,255,255,0.05);
+  --add-tab-active-bg: rgba(255,255,255,0.1);
+  --note-bg: #303030;
+  --settings-bg: rgba(20,20,20,0.85);
+  --select-bg: #111;
+  --select-text: #fff;
+  --select-border: #555;
+  --select-option-bg: #111;
+  --btn-hover-bg: rgba(255,255,255,0.1);
+  --scrollbar-thumb: rgba(255,255,255,0.2);
+  --scrollbar-thumb-hover: rgba(255,255,255,0.3);
+  --log-bg: rgba(0,0,0,0.8);
+  --editor-pre-bg: rgba(0,0,0,0.3);
+}
+
+body.theme-light {
+  --text-color: #000;
+  --titlebar-bg: rgba(255,255,255,0.7);
+  --main-bg: rgba(255,255,255,0.6);
+  --tab-hover-bg: rgba(0,0,0,0.07);
+  --tab-active-bg: #e0e0e0;
+  --rename-bg: rgba(0,0,0,0.1);
+  --add-tab-hover-bg: rgba(0,0,0,0.05);
+  --add-tab-active-bg: rgba(0,0,0,0.1);
+  --note-bg: #f5f5f5;
+  --settings-bg: rgba(255,255,255,0.85);
+  --select-bg: #eee;
+  --select-text: #000;
+  --select-border: #aaa;
+  --select-option-bg: #fff;
+  --btn-hover-bg: rgba(0,0,0,0.1);
+  --scrollbar-thumb: rgba(0,0,0,0.3);
+  --scrollbar-thumb-hover: rgba(0,0,0,0.4);
+  --log-bg: rgba(255,255,255,0.8);
+  --editor-pre-bg: rgba(0,0,0,0.1);
+}
+
+body.theme-acrylic {
+  --text-color: #fff;
+  --titlebar-bg: rgba(0,0,0,0.4);
+  --main-bg: rgba(0,0,0,0.4);
+  --tab-hover-bg: rgba(255,255,255,0.1);
+  --tab-active-bg: rgba(0,0,0,0.6);
+  --rename-bg: rgba(0,0,0,0.5);
+  --add-tab-hover-bg: rgba(255,255,255,0.1);
+  --add-tab-active-bg: rgba(255,255,255,0.2);
+  --note-bg: rgba(0,0,0,0.6);
+  --settings-bg: rgba(30,30,30,0.75);
+  --select-bg: #222;
+  --select-text: #fff;
+  --select-border: #555;
+  --select-option-bg: #222;
+  --btn-hover-bg: rgba(255,255,255,0.2);
+  --scrollbar-thumb: rgba(255,255,255,0.3);
+  --scrollbar-thumb-hover: rgba(255,255,255,0.4);
+  --log-bg: rgba(0,0,0,0.8);
+  --editor-pre-bg: rgba(0,0,0,0.4);
+}
+
 body {
   font-family: var(--app-font);
   background: transparent;
   overflow: hidden;
+  color: var(--text-color);
 }
 
 #app {
@@ -37,8 +104,8 @@ body {
   padding-right: 0;
   user-select: none;
   -webkit-app-region: drag;
-  color: #fff;
-  background: rgba(0,0,0,0.2);
+  color: var(--text-color);
+  background: var(--titlebar-bg);
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
 }
@@ -60,7 +127,7 @@ body {
 #logs-btn {
   background: transparent;
   border: none;
-  color: #fff;
+  color: var(--text-color);
   font-size: 16px;
   cursor: pointer;
 }
@@ -74,7 +141,7 @@ body {
   height: 34px;
   border: none;
   background: transparent;
-  color: #fff;
+  color: var(--text-color);
   cursor: pointer;
   -webkit-app-region: no-drag;
   display: flex;
@@ -88,7 +155,7 @@ body {
 }
 
 .window-btn:hover {
-  background: rgba(255,255,255,0.1);
+  background: var(--btn-hover-bg);
 }
 
 #close-btn:hover {
@@ -99,7 +166,7 @@ body {
   flex: 1;
   display: flex;
   overflow: hidden;
-  background: rgba(0,0,0,0.2);
+  background: var(--main-bg);
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
 }
@@ -124,7 +191,7 @@ body {
   align-items: center;
   padding: 6px 14px 6px 20px;
   margin: 0 4px 4px 4px;
-  color: #fff;
+  color: var(--text-color);
   cursor: pointer;
   border-radius: 8px;
   transition: background 0.2s, box-shadow 0.2s;
@@ -134,11 +201,11 @@ body {
 }
 
 .tab:hover {
-  background: rgba(255,255,255,0.07);
+  background: var(--tab-hover-bg);
 }
 
  .tab.active {
-  background: #303030;
+  background: var(--tab-active-bg);
   margin-right: 4px;
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.4);
@@ -168,9 +235,9 @@ body {
 
 .rename-input {
   flex: 1;
-  background: rgba(0,0,0,0.4);
+  background: var(--rename-bg);
   border: none;
-  color: #fff;
+  color: var(--text-color);
   padding: 2px 4px;
   font-size: inherit;
   border-radius: 4px;
@@ -183,7 +250,7 @@ body {
   opacity: 0;
   background: transparent;
   border: none;
-  color: #fff;
+  color: var(--text-color);
   cursor: pointer;
   font-size: 16px;
   padding: 0 4px;
@@ -200,7 +267,7 @@ body {
 #add-tab {
   border: none;
   background: transparent;
-  color: #fff;
+  color: var(--text-color);
   padding: 6px 14px 6px 20px;
   cursor: pointer;
   border-radius: 8px;
@@ -209,19 +276,19 @@ body {
 }
 
 #add-tab:hover {
-  background: rgba(255,255,255,0.05);
+  background: var(--add-tab-hover-bg);
 }
 
 #add-tab:active {
-  background: rgba(255,255,255,0.1);
+  background: var(--add-tab-active-bg);
 }
 
 #note-area {
   flex: 1;
   margin: 4px 10px 10px 8px;
-  background: #303030;
+  background: var(--note-bg);
   position: relative;
-  color: #fff;
+  color: var(--text-color);
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
   overflow: hidden;
@@ -251,7 +318,7 @@ body {
   font-size: 14px;
   line-height: 1.4;
   background: transparent;
-  color: #fff;
+  color: var(--text-color);
   overflow: auto;
 }
 
@@ -282,13 +349,13 @@ body {
   right: 0;
   bottom: 0;
   padding: 30px;
-  color: #fff;
+  color: var(--text-color);
   display: flex;
   flex-direction: column;
   gap: 24px;
   overflow: auto;
   z-index: 1000;
-  background: rgba(20,20,20,0.85);
+  background: var(--settings-bg);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
@@ -314,9 +381,9 @@ body {
 
 #settings-view select {
   padding: 8px;
-  background: #111;
-  color: #fff;
-  border: 1px solid #555;
+  background: var(--select-bg);
+  color: var(--select-text);
+  border: 1px solid var(--select-border);
   border-radius: 4px;
   font-size: 14px;
 }
@@ -328,8 +395,8 @@ body {
 }
 
 #settings-view select option {
-  background: #111;
-  color: #fff;
+  background: var(--select-option-bg);
+  color: var(--select-text);
 }
 
 
@@ -339,7 +406,7 @@ body {
   right: 12px;
   background: transparent;
   border: none;
-  color: #fff;
+  color: var(--text-color);
   font-size: 20px;
   cursor: pointer;
   padding: 4px;
@@ -354,14 +421,14 @@ body {
 .gradient-preview {
   width: 24px;
   height: 24px;
-  border: 1px solid #555;
+  border: 1px solid var(--select-border);
   border-radius: 4px;
 }
 
 /* Minimal dark scrollbars */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.2) transparent;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
 *::-webkit-scrollbar {
@@ -374,12 +441,12 @@ body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.2);
+  background: var(--scrollbar-thumb);
   border-radius: 3px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.3);
+  background: var(--scrollbar-thumb-hover);
 }
 
 #log-panel {
@@ -388,8 +455,8 @@ body {
   right: 0;
   bottom: 0;
   height: 30%;
-  background: rgba(0,0,0,0.8);
-  color: #fff;
+  background: var(--log-bg);
+  color: var(--text-color);
   font-family: monospace;
   padding: 8px;
   overflow-y: auto;
@@ -409,7 +476,7 @@ body {
 }
 
 #editor pre {
-  background: rgba(0,0,0,0.3);
+  background: var(--editor-pre-bg);
   padding: 8px;
   border-radius: 6px;
   overflow: auto;

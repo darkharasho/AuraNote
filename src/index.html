@@ -60,7 +60,7 @@
   }
   </script>
 </head>
-<body>
+<body class="theme-dark">
   <div id="app">
     <div id="titlebar">
       <span id="app-title">AuraNote</span>
@@ -88,6 +88,14 @@
     <div id="settings-view" class="hidden">
       <button id="close-settings" title="Close settings">×</button>
       <h2>Settings</h2>
+      <div class="setting">
+        <label for="theme-select">Theme:</label>
+        <select id="theme-select">
+          <option value="dark-mica">Dark Mica</option>
+          <option value="light-mica">Light Mica</option>
+          <option value="acrylic">Acrylic</option>
+        </select>
+      </div>
       <div class="setting">
         <label for="gradient-select">Gradient Theme:</label>
         <div class="gradient-row">

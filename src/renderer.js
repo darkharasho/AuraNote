@@ -12,6 +12,7 @@ settingsView.classList.add('hidden');
 const gradientSelect = document.getElementById('gradient-select');
 const gradientPreview = document.getElementById('gradient-preview');
 const fontSelect = document.getElementById('font-select');
+const themeSelect = document.getElementById('theme-select');
 const logsBtn = document.getElementById('logs-btn');
 const logPanel = document.getElementById('log-panel');
 const logOutput = document.getElementById('log-output');
@@ -32,10 +33,30 @@ if (savedFont) {
   document.body.style.setProperty('--app-font', "'" + savedFont + "', sans-serif");
 }
 
+function applyTheme(theme, persist = true) {
+  document.body.classList.remove('theme-dark', 'theme-light', 'theme-acrylic');
+  if (theme === 'light-mica') {
+    document.body.classList.add('theme-light');
+  } else if (theme === 'acrylic') {
+    document.body.classList.add('theme-acrylic');
+  } else {
+    document.body.classList.add('theme-dark');
+  }
+  window.api.setTheme(theme);
+  if (persist) {
+    localStorage.setItem('theme', theme);
+  }
+}
+
+const savedTheme = localStorage.getItem('theme') || 'dark-mica';
+themeSelect.value = savedTheme;
+applyTheme(savedTheme, false);
+
 function syncDropdownWidths() {
   const width = gradientSelect.offsetWidth;
   if (width) {
     fontSelect.style.width = `${width}px`;
+    themeSelect.style.width = `${width}px`;
   }
 }
 syncDropdownWidths();
@@ -325,6 +346,10 @@ gradientSelect.addEventListener('change', (e) => {
 fontSelect.addEventListener('change', (e) => {
   document.body.style.setProperty('--app-font', "'" + e.target.value + "', sans-serif");
   localStorage.setItem('font', e.target.value);
+});
+
+themeSelect.addEventListener('change', (e) => {
+  applyTheme(e.target.value);
 });
 
 const minBtn = document.getElementById('min-btn');
