@@ -14,6 +14,7 @@ contextBridge.exposeInMainWorld('api', {
   importMd: () => ipcRenderer.invoke('import-md'),
   exportTab: (tab) => ipcRenderer.invoke('export-md', tab),
   getVersion: () => ipcRenderer.invoke('app:version'),
+  checkForUpdates: () => ipcRenderer.invoke('update:check'),
   onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', (_e, info) => callback(info)),
   installUpdate: () => ipcRenderer.invoke('update:install')
 });

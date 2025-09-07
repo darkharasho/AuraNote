@@ -5,6 +5,11 @@ try {
   localStorage.removeItem('tabs');
 }
 
+window.api?.getVersion?.().then(version => {
+  const titleEl = document.getElementById('app-title');
+  if (titleEl) titleEl.textContent = `AuraNote v${version}`;
+});
+
 const tabButtons = document.querySelectorAll('#tabs .tab');
 const sections = document.querySelectorAll('.settings-section');
 tabButtons.forEach(btn => {
@@ -21,6 +26,9 @@ confirmCloseSelect.value = localStorage.getItem('confirm-close') || 'off';
 confirmCloseSelect.addEventListener('change', e => {
   localStorage.setItem('confirm-close', e.target.value);
 });
+
+const checkUpdateBtn = document.getElementById('check-update-btn');
+checkUpdateBtn.addEventListener('click', () => window.api?.checkForUpdates?.());
 
 const gradientSelect = document.getElementById('gradient-select');
 const gradientPreview = document.getElementById('gradient-preview');

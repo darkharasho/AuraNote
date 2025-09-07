@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const { MicaBrowserWindow } = require('mica-electron');
 const path = require('path');
 const fs = require('fs');
-const { initAutoUpdate } = require('./app/auto-updater');
+const { initAutoUpdate, checkForUpdates } = require('./app/auto-updater');
 
 let mainWindow;
 let currentTheme = 'dark-mica';
@@ -140,3 +140,8 @@ ipcMain.handle('export-md', async (event, tab) => {
 });
 
 ipcMain.handle('app:version', () => app.getVersion());
+ipcMain.handle('update:check', () => {
+  if (app.isPackaged) {
+    checkForUpdates();
+  }
+});

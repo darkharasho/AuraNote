@@ -15,4 +15,8 @@ function initAutoUpdate() {
   autoUpdater.checkForUpdatesAndNotify();
 }
 
-module.exports = { initAutoUpdate };
+function checkForUpdates() {
+  autoUpdater.checkForUpdatesAndNotify();
+}
+
+module.exports = { initAutoUpdate, checkForUpdates };

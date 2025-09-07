@@ -85,10 +85,6 @@ function showToast(msg, action) {
   document.body.appendChild(toast);
 }
 
-window.api?.getVersion?.().then(version => {
-  const titleEl = document.getElementById('app-title');
-  if (titleEl) titleEl.textContent = `AuraNote v${version}`;
-});
 
 window.api?.onUpdateDownloaded?.(() => {
   showToast('Update ready', {
