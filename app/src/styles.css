@@ -381,7 +381,8 @@ body {
   width: 200px;
   display: flex;
   flex-direction: column;
-  overflow: visible;
+  height: 100%;
+  overflow: hidden;
   border-bottom-left-radius: 12px;
   margin: 8px 0 8px 5px;
 }
