@@ -7,7 +7,7 @@ html, body {
   --border-gradient: linear-gradient(135deg,#ff40ff,#40ffff);
   --app-font: 'Poppins', sans-serif;
   --gradient-opacity: 0.5;
-  --glow-opacity: 0.3;
+  --glow-opacity: 0.25;
 }
 
 body.theme-dark {
@@ -608,11 +608,11 @@ body.theme-light .folder-icon svg {
 #note-area::after {
   content: '';
   position: absolute;
-  inset: -16px;
-  padding: 16px;
-  border-radius: 28px;
+  inset: -24px;
+  padding: 24px;
+  border-radius: 36px;
   background: var(--border-gradient);
-  filter: blur(24px);
+  filter: blur(40px);
   opacity: var(--glow-opacity);
   mask:
     linear-gradient(#fff 0 0) content-box,

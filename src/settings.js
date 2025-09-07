@@ -29,7 +29,7 @@ const glowSelect = document.getElementById('glow-select');
 const fontSelect = document.getElementById('font-select');
 const themeSelect = document.getElementById('theme-select');
 
-const defaultGlowOpacity = '0.35';
+const defaultGlowOpacity = '0.25';
 const defaultGradientOpacity = '0.5';
 
 function applyGlow(enabled, persist = true) {
