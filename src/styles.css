@@ -623,7 +623,7 @@ body.theme-light .folder-icon svg {
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
 }
 #note-area > * {
   position: relative;
