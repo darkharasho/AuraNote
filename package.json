@@ -1,19 +1,23 @@
 {
   "name": "auranote",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "test": "echo \"No tests configured\"",
-    "clear-tabs": "electron scripts/clear-tabs.js",
-    "prebuild": "electron-builder install-app-deps",
-    "build": "node scripts/build-installer.js"
+      "clear-tabs": "electron app/scripts/clear-tabs.js",
+      "prebuild": "electron-builder install-app-deps",
+      "build": "node app/scripts/build-installer.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/darkharasho/AuraNote.git"
+  },
   "dependencies": {
     "@milkdown/core": "^7.3.1",
     "@milkdown/plugin-listener": "^7.3.1",
@@ -33,36 +37,37 @@
   "build": {
     "appId": "com.auranote.app",
     "productName": "AuraNote",
+    "artifactName": "AuraNote-${version}-setup.${ext}",
     "directories": {
-      "output": "dist",
-      "buildResources": "media"
+      "output": "dist"
     },
     "files": [
-      "**/*"
+      "**/*",
+      "!dist/**"
     ],
-    "mac": {
-      "target": [
-        "dmg"
-      ],
-      "icon": "media/AuraNote.png"
-    },
     "win": {
-      "target": [
-        "nsis"
-      ],
-      "icon": "media/AuraNote.ico"
+      "target": "nsis",
+        "icon": "media/AuraNote.png"
+    },
+    "mac": {
+        "icon": "media/AuraNote.png"
     },
     "linux": {
+        "icon": "media/AuraNote.png",
       "target": [
         "AppImage"
-      ],
-      "icon": "media/AuraNote.png"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "runAfterFinish": true,
+      "perMachine": true,
+      "deleteAppDataOnUninstall": true
     },
     "publish": [
       {
-        "provider": "github",
-        "owner": "darkharasho",
-        "repo": "AuraNote"
+        "provider": "github"
       }
     ]
   }

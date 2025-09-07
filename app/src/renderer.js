@@ -66,12 +66,23 @@ function getDragAfterElement(container, y, selector) {
   }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
-function showToast(msg) {
+function showToast(msg, action) {
   const toast = document.createElement('div');
-  toast.className = 'toast';
+  toast.className = action ? 'toast toast-action' : 'toast';
   toast.textContent = msg;
+  if (action) {
+    const btn = document.createElement('button');
+    btn.textContent = action.label;
+    btn.addEventListener('click', () => {
+      action.onClick();
+      toast.remove();
+    });
+    toast.appendChild(btn);
+    setTimeout(() => toast.remove(), 10000);
+  } else {
+    setTimeout(() => toast.remove(), 3000);
+  }
   document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
 }
 
 window.api?.getVersion?.().then(version => {
@@ -80,10 +91,10 @@ window.api?.getVersion?.().then(version => {
 });
 
 window.api?.onUpdateDownloaded?.(() => {
-  showToast('Update downloaded');
-  if (confirm('Install and restart now?')) {
-    window.api.installUpdate();
-  }
+  showToast('Update ready', {
+    label: 'Install',
+    onClick: () => window.api.installUpdate()
+  });
 });
 
 tabList.addEventListener('dragover', (e) => {
@@ -242,7 +253,7 @@ noteArea.addEventListener('click', async (e) => {
   view.focus();
 });
 
-const isDev = typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production';
+const isDev = window.api?.isDev;
 if (isDev) {
   function formatLogArg(a) {
     if (a instanceof Error) {
@@ -407,9 +418,23 @@ async function initMilkdown() {
   } catch (err) {
     console.error('Milkdown failed to load, falling back to plain editor', err);
     editorContainer.contentEditable = 'true';
+    setContent = (md) => {
+      editorContainer.textContent = md;
+    };
+    editorContainer.textContent = currentTab?.content || '';
     editorContainer.addEventListener('input', () => {
       if (!currentTab) return;
-      currentTab.content = editorContainer.textContent;
+      const md = editorContainer.textContent;
+      currentTab.content = md;
+      const firstLine = md.trimStart().split('\n')[0];
+      const m = firstLine.match(/^#{1,6}\s+(.*)$/);
+      if (m) {
+        const name = m[1].trim();
+        if (name && currentTab.title !== name) {
+          currentTab.title = name;
+          renderTabs();
+        }
+      }
       saveTabs();
     });
   }

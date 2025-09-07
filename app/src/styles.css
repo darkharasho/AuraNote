@@ -214,21 +214,33 @@ body.theme-deep-ocean {
   --log-bg: rgba(0,10,20,0.9);
   --editor-pre-bg: rgba(0,0,0,0.4);
   --border-gradient: linear-gradient(135deg,#00b4d8,#0077be,#00f5d4);
+  --wave-bg: url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%201200%20800'%20preserveAspectRatio%3D'none'%3E%3Cpath%20fill%3D'%23003552'%20d%3D'M0%20800h1200v-100c-180-60-420-20-600%200s-420%2020-600%200z'%2F%3E%3Cpath%20fill%3D'%23005f73'%20d%3D'M0%20700c220%2060%20380-20%20600%2020s380%2020%20600-20v-110c-220-60-380%2020-600-20s-380-20-600%2020z'%2F%3E%3Cpath%20fill%3D'%23008c9e'%20d%3D'M0%20590c260%2060%20360-30%20600%2030s360%2030%20600-30v-140c-260-60-360%2030-600-30s-360-30-600%2030z'%2F%3E%3Cpath%20fill%3D'%2300b4d8'%20d%3D'M0%20450c240%2060%20420-30%20600%2040s420%2030%20600-40V0H0z'%2F%3E%3C%2Fsvg%3E");
 }
 
-body.theme-deep-ocean #main-view::before {
+body.theme-deep-ocean #main-view::before,
+body.theme-deep-ocean #main-view::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800' preserveAspectRatio='none'%3E%3Cpath fill='%23003552' d='M0 800h1200v-90c-200-40-400-40-600 0s-400 40-600 0z'/%3E%3Cpath fill='%23005f73' d='M0 710c200 40 400-40 600 0s400 40 600 0v-110c-200-40-400-40-600 0s-400 40-600 0z'/%3E%3Cpath fill='%23008c9e' d='M0 600c200 40 400-40 600 0s400 40 600 0v-130c-200-40-400-40-600 0s-400 40-600 0z'/%3E%3Cpath fill='%2300b4d8' d='M0 470c200 40 400-40 600 0s400 40 600 0V0H0z'/%3E%3C/svg%3E") repeat-x;
-  background-size: 200% 100%;
-  background-position: 0 100%;
-  animation: driftWaves 40s linear infinite;
+  background: var(--wave-bg) repeat-x;
+  background-size: 300% 150%;
   pointer-events: none;
   z-index: 0;
+}
+
+body.theme-deep-ocean #main-view::before {
+  background-position: 0 100%;
+  animation: driftWaves 40s linear infinite;
+}
+
+body.theme-deep-ocean #main-view::after {
+  background-position: 50% 100%;
+  animation: driftWaves 40s linear infinite;
+  animation-delay: -20s;
+  opacity: 0.6;
 }
 
 body {
@@ -658,6 +670,22 @@ body.theme-light .folder-icon svg {
   z-index: 10000;
   opacity: 0;
   animation: fadein 0.3s forwards, fadeout 0.3s 2.5s forwards;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toast-action {
+  animation: fadein 0.3s forwards;
+}
+
+.toast button {
+  background: var(--tab-active-bg);
+  border: none;
+  color: var(--text-color);
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 @keyframes fadein {

@@ -30,7 +30,7 @@ function createWindow() {
   mainWindow.setMicaEffect();
   mainWindow.setRoundedCorner();
 
-  mainWindow.loadFile(path.join(__dirname, 'src', 'index.html'));
+  mainWindow.loadFile(path.join(__dirname, 'app', 'src', 'index.html'));
   mainWindow.webContents.once('dom-ready', () => {
     mainWindow.show();
   });
@@ -108,13 +108,13 @@ ipcMain.handle('set-theme', (event, theme) => {
 ipcMain.handle('open-settings', () => {
   if (!mainWindow) return;
   applyTheme(mainWindow, currentTheme);
-  mainWindow.loadFile(path.join(__dirname, 'src', 'settings.html'));
+  mainWindow.loadFile(path.join(__dirname, 'app', 'src', 'settings.html'));
 });
 
 ipcMain.handle('open-main', () => {
   if (!mainWindow) return;
   applyTheme(mainWindow, currentTheme);
-  mainWindow.loadFile(path.join(__dirname, 'src', 'index.html'));
+  mainWindow.loadFile(path.join(__dirname, 'app', 'src', 'index.html'));
 });
 
 ipcMain.handle('import-md', async () => {
