@@ -5,6 +5,11 @@ try {
   localStorage.removeItem('tabs');
 }
 
+window.api?.getVersion?.().then(version => {
+  const titleEl = document.getElementById('app-title');
+  if (titleEl) titleEl.textContent = `AuraNote v${version}`;
+});
+
 const tabButtons = document.querySelectorAll('#tabs .tab');
 const sections = document.querySelectorAll('.settings-section');
 tabButtons.forEach(btn => {
@@ -20,6 +25,51 @@ const confirmCloseSelect = document.getElementById('confirm-close-select');
 confirmCloseSelect.value = localStorage.getItem('confirm-close') || 'off';
 confirmCloseSelect.addEventListener('change', e => {
   localStorage.setItem('confirm-close', e.target.value);
+});
+
+const checkUpdateBtn = document.getElementById('check-update-btn');
+checkUpdateBtn.addEventListener('click', () => window.api?.checkForUpdates?.());
+
+function showToast(msg, action, { duration } = {}) {
+  const toast = document.createElement('div');
+  toast.className = action ? 'toast toast-action' : 'toast';
+  const text = document.createElement('span');
+  text.textContent = msg;
+  toast.appendChild(text);
+  if (action) {
+    const btn = document.createElement('button');
+    btn.className = 'gradient-btn';
+    btn.textContent = action.label;
+    btn.addEventListener('click', () => {
+      action.onClick();
+      toast.remove();
+    });
+    toast.appendChild(btn);
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'toast-close';
+    closeBtn.textContent = '×';
+    closeBtn.addEventListener('click', () => toast.remove());
+    toast.appendChild(closeBtn);
+    if (duration !== 0) {
+      setTimeout(() => toast.remove(), duration ?? 10000);
+    }
+  } else {
+    if (duration !== 0) {
+      setTimeout(() => toast.remove(), duration ?? 3000);
+    }
+  }
+  document.body.appendChild(toast);
+}
+
+window.api?.onUpdateNotAvailable?.(() => {
+  showToast('You are up to date');
+});
+
+window.api?.onUpdateDownloaded?.(() => {
+  showToast('Update ready', {
+    label: 'Install',
+    onClick: () => window.api.installUpdate()
+  }, { duration: 0 });
 });
 
 const gradientSelect = document.getElementById('gradient-select');

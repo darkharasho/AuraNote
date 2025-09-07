@@ -1,6 +1,6 @@
 {
   "name": "auranote",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -62,6 +62,8 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "runAfterFinish": true,
+      "installerSidebar": "./media/AuraNoteBanner.bmp",
+      "uninstallerSidebar": "./media/AuraNoteBanner.bmp",
       "perMachine": true,
       "deleteAppDataOnUninstall": true
     },
