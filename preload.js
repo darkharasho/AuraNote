@@ -1,6 +1,12 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
+const isDev =
+  process.env.NODE_ENV === 'development' ||
+  process.defaultApp ||
+  /[\\/]electron[\\/]/.test(process.execPath);
+
 contextBridge.exposeInMainWorld('api', {
+  isDev,
   windowControl: (action) => ipcRenderer.invoke('window-control', action),
   setTheme: (theme) => ipcRenderer.invoke('set-theme', theme),
   openSettings: () => ipcRenderer.invoke('open-settings'),

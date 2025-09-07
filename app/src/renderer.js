@@ -253,7 +253,7 @@ noteArea.addEventListener('click', async (e) => {
   view.focus();
 });
 
-const isDev = typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production';
+const isDev = window.api?.isDev;
 if (isDev) {
   function formatLogArg(a) {
     if (a instanceof Error) {
