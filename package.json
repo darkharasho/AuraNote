@@ -21,14 +21,14 @@
     "@milkdown/prose": "^7.3.1",
     "@milkdown/theme-nord": "^7.3.1",
     "@milkdown/utils": "^7.3.1",
-    "electron": "^25.9.8",
     "electron-updater": "^6.6.2",
     "lodash-es": "^4.17.21",
     "mica-electron": "^1.5.16",
     "nanoid": "^5.0.9"
   },
   "devDependencies": {
-    "electron-builder": "^26.0.12"
+    "electron-builder": "^26.0.12",
+    "electron": "^25.9.8"
   },
   "build": {
     "appId": "com.auranote.app",
