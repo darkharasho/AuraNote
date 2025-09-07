@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const { MicaBrowserWindow } = require('mica-electron');
 const path = require('path');
 const fs = require('fs');
+const { initAutoUpdate } = require('./app/auto-updater');
 
 let mainWindow;
 let currentTheme = 'dark-mica';
@@ -35,7 +36,12 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  createWindow();
+  if (app.isPackaged) {
+    initAutoUpdate();
+  }
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
@@ -132,3 +138,5 @@ ipcMain.handle('export-md', async (event, tab) => {
   fs.writeFileSync(filePath, tab.content, 'utf8');
   return true;
 });
+
+ipcMain.handle('app:version', () => app.getVersion());

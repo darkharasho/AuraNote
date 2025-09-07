@@ -74,6 +74,18 @@ function showToast(msg) {
   setTimeout(() => toast.remove(), 3000);
 }
 
+window.api?.getVersion?.().then(version => {
+  const titleEl = document.getElementById('app-title');
+  if (titleEl) titleEl.textContent = `AuraNote v${version}`;
+});
+
+window.api?.onUpdateDownloaded?.(() => {
+  showToast('Update downloaded');
+  if (confirm('Install and restart now?')) {
+    window.api.installUpdate();
+  }
+});
+
 tabList.addEventListener('dragover', (e) => {
   e.preventDefault();
   const selector = draggedFolderId ? '.folder' : '.tab';

@@ -6,5 +6,8 @@ contextBridge.exposeInMainWorld('api', {
   openSettings: () => ipcRenderer.invoke('open-settings'),
   openMain: () => ipcRenderer.invoke('open-main'),
   importMd: () => ipcRenderer.invoke('import-md'),
-  exportTab: (tab) => ipcRenderer.invoke('export-md', tab)
+  exportTab: (tab) => ipcRenderer.invoke('export-md', tab),
+  getVersion: () => ipcRenderer.invoke('app:version'),
+  onUpdateDownloaded: (callback) => ipcRenderer.on('update-downloaded', (_e, info) => callback(info)),
+  installUpdate: () => ipcRenderer.invoke('update:install')
 });
