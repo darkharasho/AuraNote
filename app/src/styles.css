@@ -365,7 +365,8 @@ body {
 #main-view {
   flex: 1;
   display: flex;
-  overflow: visible;
+  overflow: hidden;
+  min-height: 0;
   background: var(--main-bg);
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
@@ -381,9 +382,12 @@ body {
   width: 200px;
   display: flex;
   flex-direction: column;
-  overflow: visible;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
   border-bottom-left-radius: 12px;
-  margin: 8px 0 8px 5px;
+  margin: 8px 0 0 5px;
+  padding-bottom: 8px;
 }
 
 #tab-list {
@@ -391,6 +395,7 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   padding: 6px 6px 6px 0;
+  min-height: 0;
 }
 
 .tab {
@@ -572,7 +577,7 @@ body.theme-light .folder-icon svg {
   cursor: pointer;
   border-radius: 8px;
   transition: background 0.2s;
-  margin: 4px 4px 0 4px;
+  margin: 4px;
 }
 
 #add-tab:hover {
