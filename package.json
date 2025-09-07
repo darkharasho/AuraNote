@@ -1,6 +1,6 @@
 {
   "name": "auranote",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "main.js",
   "scripts": {
@@ -14,6 +14,10 @@
   "author": "",
   "license": "ISC",
   "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/darkharasho/AuraNote.git"
+  },
   "dependencies": {
     "@milkdown/core": "^7.3.1",
     "@milkdown/plugin-listener": "^7.3.1",
