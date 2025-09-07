@@ -2,6 +2,8 @@ const { autoUpdater } = require('electron-updater');
 const { ipcMain, BrowserWindow } = require('electron');
 
 function initAutoUpdate() {
+  autoUpdater.autoInstallOnAppQuit = false;
+
   autoUpdater.on('update-downloaded', () => {
     BrowserWindow.getAllWindows().forEach(win => {
       win.webContents.send('update-downloaded');
