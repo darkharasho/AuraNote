@@ -30,6 +30,36 @@ confirmCloseSelect.addEventListener('change', e => {
 const checkUpdateBtn = document.getElementById('check-update-btn');
 checkUpdateBtn.addEventListener('click', () => window.api?.checkForUpdates?.());
 
+function showToast(msg, action) {
+  const toast = document.createElement('div');
+  toast.className = action ? 'toast toast-action' : 'toast';
+  toast.textContent = msg;
+  if (action) {
+    const btn = document.createElement('button');
+    btn.textContent = action.label;
+    btn.addEventListener('click', () => {
+      action.onClick();
+      toast.remove();
+    });
+    toast.appendChild(btn);
+    setTimeout(() => toast.remove(), 10000);
+  } else {
+    setTimeout(() => toast.remove(), 3000);
+  }
+  document.body.appendChild(toast);
+}
+
+window.api?.onUpdateNotAvailable?.(() => {
+  showToast('You are up to date');
+});
+
+window.api?.onUpdateDownloaded?.(() => {
+  showToast('Update ready', {
+    label: 'Install',
+    onClick: () => window.api.installUpdate()
+  });
+});
+
 const gradientSelect = document.getElementById('gradient-select');
 const gradientPreview = document.getElementById('gradient-preview');
 const gradientOutlineSelect = document.getElementById('gradient-outline-select');

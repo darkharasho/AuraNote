@@ -8,7 +8,7 @@ function initAutoUpdate() {
     });
   });
 
-  ipcMain.on('update:install', () => {
+  ipcMain.handle('update:install', () => {
     autoUpdater.quitAndInstall();
   });
 
@@ -16,7 +16,12 @@ function initAutoUpdate() {
 }
 
 function checkForUpdates() {
-  autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.once('update-not-available', () => {
+    BrowserWindow.getAllWindows().forEach(win => {
+      win.webContents.send('update-not-available');
+    });
+  });
+  autoUpdater.checkForUpdates();
 }
 
 module.exports = { initAutoUpdate, checkForUpdates };
