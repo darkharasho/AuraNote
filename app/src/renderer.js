@@ -69,15 +69,23 @@ function getDragAfterElement(container, y, selector) {
 function showToast(msg, action) {
   const toast = document.createElement('div');
   toast.className = action ? 'toast toast-action' : 'toast';
-  toast.textContent = msg;
+  const text = document.createElement('span');
+  text.textContent = msg;
+  toast.appendChild(text);
   if (action) {
     const btn = document.createElement('button');
+    btn.className = 'gradient-btn';
     btn.textContent = action.label;
     btn.addEventListener('click', () => {
       action.onClick();
       toast.remove();
     });
     toast.appendChild(btn);
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'toast-close';
+    closeBtn.textContent = '×';
+    closeBtn.addEventListener('click', () => toast.remove());
+    toast.appendChild(closeBtn);
     setTimeout(() => toast.remove(), 10000);
   } else {
     setTimeout(() => toast.remove(), 3000);
