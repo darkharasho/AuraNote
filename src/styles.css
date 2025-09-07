@@ -608,11 +608,20 @@ body.theme-light .folder-icon svg {
 #note-area::after {
   content: '';
   position: absolute;
-  inset: -24px;
-  border-radius: 36px;
+  inset: 0;
+  padding: 1px;
+  border-radius: 12px;
   background: var(--border-gradient);
-  filter: blur(40px);
+  filter: blur(24px);
   opacity: var(--glow-opacity);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
   pointer-events: none;
   z-index: -1;
 }
