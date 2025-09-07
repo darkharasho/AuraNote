@@ -66,12 +66,23 @@ function getDragAfterElement(container, y, selector) {
   }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
-function showToast(msg) {
+function showToast(msg, action) {
   const toast = document.createElement('div');
-  toast.className = 'toast';
+  toast.className = action ? 'toast toast-action' : 'toast';
   toast.textContent = msg;
+  if (action) {
+    const btn = document.createElement('button');
+    btn.textContent = action.label;
+    btn.addEventListener('click', () => {
+      action.onClick();
+      toast.remove();
+    });
+    toast.appendChild(btn);
+    setTimeout(() => toast.remove(), 10000);
+  } else {
+    setTimeout(() => toast.remove(), 3000);
+  }
   document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
 }
 
 window.api?.getVersion?.().then(version => {
@@ -80,10 +91,10 @@ window.api?.getVersion?.().then(version => {
 });
 
 window.api?.onUpdateDownloaded?.(() => {
-  showToast('Update downloaded');
-  if (confirm('Install and restart now?')) {
-    window.api.installUpdate();
-  }
+  showToast('Update ready', {
+    label: 'Install',
+    onClick: () => window.api.installUpdate()
+  });
 });
 
 tabList.addEventListener('dragover', (e) => {
