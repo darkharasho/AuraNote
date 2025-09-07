@@ -608,11 +608,11 @@ body.theme-light .folder-icon svg {
 #note-area::after {
   content: '';
   position: absolute;
-  inset: -4px;
-  padding: 4px;
-  border-radius: 16px;
+  inset: -8px;
+  padding: 8px;
+  border-radius: 20px;
   background: var(--border-gradient);
-  filter: blur(16px);
+  filter: blur(24px);
   opacity: var(--glow-opacity);
   mask:
     linear-gradient(#fff 0 0) content-box,
