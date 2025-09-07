@@ -602,7 +602,7 @@ body.theme-light .folder-icon svg {
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
 }
 
 #note-area::after {
@@ -614,11 +614,11 @@ body.theme-light .folder-icon svg {
   filter: blur(16px);
   opacity: var(--glow-opacity);
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
 }
 #note-area > * {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 #editor {
   height: 100%;
