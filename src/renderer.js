@@ -150,7 +150,7 @@ if (savedFont) {
   document.body.style.setProperty('--app-font', "'" + savedFont + "', sans-serif");
 }
 
-const defaultGlowOpacity = '0.25';
+const defaultGlowOpacity = '0.35';
 const defaultGradientOpacity = '0.5';
 
 function applyGlow(enabled, persist = true) {
