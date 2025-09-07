@@ -661,7 +661,7 @@ body.theme-light .folder-icon svg {
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.6);
   color: #fff;
   padding: 8px 16px;
   border: 1px solid var(--tab-active-bg);
@@ -689,11 +689,14 @@ body.theme-light .folder-icon svg {
   cursor: pointer;
 }
 
+.toast .gradient-btn {
+  background: var(--border-gradient);
+  color: #fff;
+}
+
 .toast-close {
-  background: transparent;
   color: #fff;
   margin-left: auto;
-  padding: 4px;
   cursor: pointer;
 }
 

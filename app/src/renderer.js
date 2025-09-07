@@ -66,7 +66,7 @@ function getDragAfterElement(container, y, selector) {
   }, { offset: Number.NEGATIVE_INFINITY }).element;
 }
 
-function showToast(msg, action) {
+function showToast(msg, action, { duration } = {}) {
   const toast = document.createElement('div');
   toast.className = action ? 'toast toast-action' : 'toast';
   const text = document.createElement('span');
@@ -81,14 +81,18 @@ function showToast(msg, action) {
       toast.remove();
     });
     toast.appendChild(btn);
-    const closeBtn = document.createElement('button');
+    const closeBtn = document.createElement('span');
     closeBtn.className = 'toast-close';
     closeBtn.textContent = '×';
     closeBtn.addEventListener('click', () => toast.remove());
     toast.appendChild(closeBtn);
-    setTimeout(() => toast.remove(), 10000);
+    if (duration !== 0) {
+      setTimeout(() => toast.remove(), duration ?? 10000);
+    }
   } else {
-    setTimeout(() => toast.remove(), 3000);
+    if (duration !== 0) {
+      setTimeout(() => toast.remove(), duration ?? 3000);
+    }
   }
   document.body.appendChild(toast);
 }
@@ -98,7 +102,7 @@ window.api?.onUpdateDownloaded?.(() => {
   showToast('Update ready', {
     label: 'Install',
     onClick: () => window.api.installUpdate()
-  });
+  }, { duration: 0 });
 });
 
 tabList.addEventListener('dragover', (e) => {
