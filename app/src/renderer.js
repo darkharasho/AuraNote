@@ -418,9 +418,23 @@ async function initMilkdown() {
   } catch (err) {
     console.error('Milkdown failed to load, falling back to plain editor', err);
     editorContainer.contentEditable = 'true';
+    setContent = (md) => {
+      editorContainer.textContent = md;
+    };
+    editorContainer.textContent = currentTab?.content || '';
     editorContainer.addEventListener('input', () => {
       if (!currentTab) return;
-      currentTab.content = editorContainer.textContent;
+      const md = editorContainer.textContent;
+      currentTab.content = md;
+      const firstLine = md.trimStart().split('\n')[0];
+      const m = firstLine.match(/^#{1,6}\s+(.*)$/);
+      if (m) {
+        const name = m[1].trim();
+        if (name && currentTab.title !== name) {
+          currentTab.title = name;
+          renderTabs();
+        }
+      }
       saveTabs();
     });
   }
